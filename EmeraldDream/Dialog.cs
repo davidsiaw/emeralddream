@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Drawing;
 using EmeraldLibrary;
+using System.Windows.Forms;
 
 namespace EmeraldDream
 {
@@ -177,6 +178,109 @@ namespace EmeraldDream
             {
                 doOnceOnClose();
                 doOnceOnClose = null;
+            }
+        }
+    }
+
+    public class MenuDialog : Dialog
+    {
+        static Font font = new Font("Lucida Console", 20);
+
+        public MenuDialog(int x, int y, int w, int h)
+            : base(x, y, w, h)
+        {
+            this.SetDialogDrawingFunc(g => {
+                if (selectedindex != -1)
+                {
+                    int curr_y = 0;
+
+                    if (!string.IsNullOrEmpty(question))
+                    {
+                        SizeF remainingsize = InsideArea.Size;
+                        remainingsize.Height -= curr_y;
+                        SizeF sz = g.MeasureString(question, font, remainingsize);
+                        g.DrawString(question, font, Brushes.White, new Point(InsideArea.Left, InsideArea.Top + curr_y));
+                        curr_y += (int)sz.Height;
+                    }
+
+                    menuitemlist.ForEach(s => {
+                        SizeF remainingsize = InsideArea.Size;
+                        remainingsize.Height -= curr_y;
+
+                        SizeF sz = g.MeasureString(s, font, remainingsize);
+
+                        // Color differently if selected
+                        if (menuitemlist[selectedindex] == s)
+                        {
+                            g.FillRectangle(Brushes.White, new Rectangle(InsideArea.Left, InsideArea.Top + curr_y, InsideArea.Width, (int)sz.Height));
+                            g.DrawString(s, font, Brushes.Black, new Point(InsideArea.Left, InsideArea.Top + curr_y));
+                        }
+                        else
+                        {
+                            g.DrawString(s, font, Brushes.White, new Point(InsideArea.Left, InsideArea.Top + curr_y));
+                        }
+
+                        curr_y += (int)sz.Height;
+                        
+                    });
+
+                }
+            });
+
+            this.KeyDown += new EventHandler<KeyEventArgs>((o, e) => {
+                if (selectedindex != -1)
+                {
+                    switch (e.KeyCode)
+                    {
+                        case Keys.Up:
+                            selectedindex = (selectedindex - 1) % menuitems.Count;
+                            if (selectedindex < 0)
+                            {
+                                selectedindex = menuitems.Count - 1;
+                            }
+                            break;
+                        case Keys.Down:
+                            selectedindex = (selectedindex + 1) % menuitems.Count;
+                            break;
+                        case Keys.Enter:
+                            Close();
+                            break;
+                    }
+                }
+            });
+        }
+
+        Dictionary<string, string> menuitems = new Dictionary<string, string>();
+        List<string> menuitemlist = new List<string>();
+
+        string question = null;
+
+        public void SetQuestion(string q)
+        {
+            this.question = q;
+        }
+
+        public void AddMenuItem(string name, string text)
+        {
+            selectedindex = 0;
+            menuitemlist.Add(text);
+            menuitems[text] = name;
+        }
+
+        public void ClearMenuItems()
+        {
+            selectedindex = -1;
+            menuitemlist.Clear();
+            menuitems.Clear();
+        }
+
+        int selectedindex = -1;
+
+        public string SelectedItem
+        {
+            get
+            {
+                return menuitems[menuitemlist[selectedindex]];
             }
         }
     }

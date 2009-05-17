@@ -85,8 +85,17 @@ namespace EmeraldDream
             player = null;
             this.m = null;
             narrationdialog = new NarrationDialog(30, 400, 740, 200);
+            menudialog = new MenuDialog(30, 400, 740, 200);
+
 
             currentscene.AddLayer(narrationdialog);
+            currentscene.AddLayer(menudialog);
+
+            //menudialog.SetQuestion("どうする？");
+            //menudialog.AddMenuItem("a", "Run");
+            //menudialog.AddMenuItem("b", "Pokemon");
+            //menudialog.AddMenuItem("c", "LOL What?!");
+            //menudialog.Visible = true;
         }
 
         Map LoadMap(GameWindow g, string mapdir)
@@ -333,6 +342,7 @@ namespace EmeraldDream
         public ICharacter player;
         public PlayScene currentscene;
         public NarrationDialog narrationdialog;
+        public MenuDialog menudialog;
     }
 
     class ObjectsAssembly

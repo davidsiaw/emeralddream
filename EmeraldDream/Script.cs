@@ -24,6 +24,7 @@ namespace EmeraldDream
             MainProcedure,
             Procedure,
             Make,
+            Menu,
         }
 
         enum OperandType
@@ -209,6 +210,12 @@ namespace EmeraldDream
                 }
 
                 currentInstruction.operand.Add(tokens[3]);
+                currentInstruction.operandtype.Add(OperandType.String);
+            }
+            else if (line.StartsWith("choice"))
+            {
+                currentInstruction.type = InstructionType.Menu;
+                currentInstruction.operand.Add(line.Substring(4));
                 currentInstruction.operandtype.Add(OperandType.String);
             }
             else if (proclabelmatch.Success)
