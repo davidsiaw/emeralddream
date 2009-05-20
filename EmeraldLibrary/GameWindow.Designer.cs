@@ -53,9 +53,8 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "GameWindow";
             this.Text = "Game";
-            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.GameWindow_KeyPress);
-            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Game_KeyUp);
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Game_KeyDown);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.GameWindow_KeyUp);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.GameWindow_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.canvas)).EndInit();
             this.ResumeLayout(false);
 

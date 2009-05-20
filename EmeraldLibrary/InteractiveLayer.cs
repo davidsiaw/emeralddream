@@ -67,6 +67,7 @@ namespace EmeraldLibrary
         public event EventHandler<MouseEventArgs> MouseUp;
         public event EventHandler<KeyEventArgs> KeyDown;
         public event EventHandler<KeyEventArgs> KeyUp;
+        public event EventHandler<KeyEventArgs> DXKeyDown;
 
         #region IInteractive Members
 
@@ -77,6 +78,16 @@ namespace EmeraldLibrary
             }
             set {
                 base.Visible = value;
+            }
+        }
+
+
+
+        public void OnDXKeyDown(object sender, KeyEventArgs e)
+        {
+            if (DXKeyDown != null)
+            {
+                DXKeyDown(sender, e);
             }
         }
 

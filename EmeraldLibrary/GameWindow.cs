@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using Microsoft.DirectX.DirectInput;
 
 namespace EmeraldLibrary
 {
@@ -17,47 +18,53 @@ namespace EmeraldLibrary
         public const int ScreenHeight = 600;
 
 
-        static unsafe class Win32
+
+        class Keyboard
         {
-            const uint SPI_GETKEYBOARDDELAY = 22;
-            const uint SPI_SETKEYBOARDDELAY = 23;
-            const uint SPI_GETKEYBOARDSPEED = 10;
-            const uint SPI_SETKEYBOARDSPEED = 11;
-            const uint SPIF_UPDATEINIFILE = 1;
-              
-            [DllImport("User32.dll")]
-            static extern uint SystemParametersInfo(uint uiAction, uint uiParam, uint* pvParam, uint fWinIni);
+            Timer t = new Timer();
+            Device device = new Device(SystemGuid.Keyboard);
 
-            public static void SetKeyboardDelay(uint delay)
+            public Keyboard(Control ctl)
             {
-                // Set the new keyboard delay
-                SystemParametersInfo(SPI_SETKEYBOARDDELAY, delay, null, 0);
+                device.SetCooperativeLevel(ctl, CooperativeLevelFlags.Background | CooperativeLevelFlags.NonExclusive);
+                device.SetDataFormat(DeviceDataFormat.Keyboard);
+                try
+                {
+                    device.Acquire();
+                }
+                catch
+                {   
+                }
+                t.Interval = 1000 / 60;
+                t.Tick += new EventHandler(t_Tick);
+                t.Start();
             }
 
-            public static uint GetKeyboardDelay()
+            void t_Tick(object sender, EventArgs e)
             {
-                uint nKBDelay = 0;  // The old keyboard delay.
-
-                SystemParametersInfo(SPI_GETKEYBOARDDELAY, 0, &nKBDelay, 0);
-                return nKBDelay;
+                Poll();
             }
 
-            public static void SetKeyboardSpeed(uint speed)
+            void Poll()
             {
-                // Set the new keyboard delay
-                SystemParametersInfo(SPI_SETKEYBOARDSPEED, speed, null, SPIF_UPDATEINIFILE);
+                KeyboardState state;
+                try
+                {
+                    device.Poll();
+                    state = device.GetCurrentKeyboardState();
+                    keyDown(state);
+                }
+                catch
+                {
+                    device.Acquire();
+                }
             }
 
-            public static uint GetKeyboardSpeed()
-            {
-                uint spd = 0;  // The old keyboard delay.
-                SystemParametersInfo(SPI_GETKEYBOARDSPEED, 0, &spd, SPIF_UPDATEINIFILE);
-                return spd;
-            }
+            public Action<KeyboardState> keyDown = null;
+
         }
 
-        uint oldKeyboardDelay = 0;
-        uint oldKeyboardSpd = 0;
+        Keyboard kb;
 
         public GameWindow()
         {
@@ -65,18 +72,39 @@ namespace EmeraldLibrary
             ClearAll();
             canvas.Image = b;
 
-            oldKeyboardDelay = Win32.GetKeyboardDelay();
-            oldKeyboardSpd = Win32.GetKeyboardSpeed();
-            Win32.SetKeyboardDelay(0);
-            Win32.SetKeyboardSpeed(255);
+            kb = new Keyboard(this);
+            kb.keyDown = state => {
+                KeyEventArgs kea;
+                Keys k = Keys.None;
+                if (state[Key.Up])
+                {
+                    k |= Keys.Up;
+                }
+                if (state[Key.Down])
+                {
+                    k |= Keys.Down;
+                }
+                if (state[Key.Left])
+                {
+                    k |= Keys.Left;
+                }
+                if (state[Key.Right])
+                {
+                    k |= Keys.Right;
+                }
+                if (state[Key.Return])
+                {
+                    k |= Keys.Return;
+                }
+                kea = new KeyEventArgs(k);
+                Game_DXKeyDown(this, kea);
+            };
 
             this.FormClosing += new FormClosingEventHandler(GameWindow_FormClosing);
         }
 
         void GameWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Win32.SetKeyboardDelay(oldKeyboardDelay);
-            Win32.SetKeyboardSpeed(oldKeyboardSpd);
         }
 
         internal TileBank tiles = new TileBank();
@@ -128,21 +156,16 @@ namespace EmeraldLibrary
             }
         }
 
-        private void Game_KeyDown(object sender, KeyEventArgs e)
+
+        private void Game_DXKeyDown(object sender, KeyEventArgs e)
         {
             if (m_scene != null)
             {
-                m_scene.OnKeyDown(sender, e);
+                m_scene.OnDXKeyDown(sender, e);
             }
+
         }
 
-        private void Game_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (m_scene != null)
-            {
-                m_scene.OnKeyUp(sender, e);
-            }
-        }
 
         public void Print(string words)
         {
@@ -189,6 +212,25 @@ namespace EmeraldLibrary
 
         private void GameWindow_KeyPress(object sender, KeyPressEventArgs e)
         {
+
+        }
+
+        private void GameWindow_KeyDown(object sender, KeyEventArgs e)
+        {
+
+            if (m_scene != null)
+            {
+                m_scene.OnKeyDown(sender, e);
+            }
+        }
+
+        private void GameWindow_KeyUp(object sender, KeyEventArgs e)
+        {
+
+            if (m_scene != null)
+            {
+                m_scene.OnKeyUp(sender, e);
+            }
         }
 
     }

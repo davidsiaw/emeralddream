@@ -180,6 +180,7 @@ namespace EmeraldDream
                 doOnceOnClose = null;
             }
         }
+
     }
 
     public class MenuDialog : Dialog
@@ -190,6 +191,7 @@ namespace EmeraldDream
             : base(x, y, w, h)
         {
             this.SetDialogDrawingFunc(g => {
+
                 if (selectedindex != -1)
                 {
                     int curr_y = 0;
@@ -227,7 +229,8 @@ namespace EmeraldDream
                 }
             });
 
-            this.KeyDown += new EventHandler<KeyEventArgs>((o, e) => {
+            this.KeyDown += new EventHandler<KeyEventArgs>((o, e) =>
+            {
                 if (selectedindex != -1)
                 {
                     switch (e.KeyCode)
@@ -248,7 +251,9 @@ namespace EmeraldDream
                     }
                 }
             });
+
         }
+
 
         Dictionary<string, string> menuitems = new Dictionary<string, string>();
         List<string> menuitemlist = new List<string>();

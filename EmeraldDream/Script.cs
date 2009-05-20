@@ -5,6 +5,7 @@ using System.Text;
 using System.Reflection;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Collections;
 
 namespace EmeraldDream
 {
@@ -21,10 +22,13 @@ namespace EmeraldDream
             Noop,
             Say,
             Set,
-            MainProcedure,
-            Procedure,
+            MainProcedureLabel,
+            ProcedureLabel,
             Make,
             Menu,
+            For,    // Start Choice subroutine
+            End,    // End choice subroutine
+            Jump
         }
 
         enum OperandType
@@ -33,6 +37,7 @@ namespace EmeraldDream
             ObjectName,
             MapName,
             ProcName,
+            Choicename,
         }
 
         class Instruction
@@ -41,7 +46,13 @@ namespace EmeraldDream
             public List<string> operand = new List<string>();
             public List<OperandType> operandtype = new List<OperandType>();
             public Action<StreamReader> operandConsumer = null;
-            public List<Instruction> instructionsInProcedure = new List<Instruction>();
+            public List<Procedure> associatedProcs = new List<Procedure>();
+        }
+
+        class Procedure
+        {
+            public List<Instruction> instructions = new List<Instruction>();
+            public int returnInstruction = 0;
         }
 
         CodeLoader cl = new CodeLoader();
@@ -109,6 +120,13 @@ namespace EmeraldDream
 
         void ConsumeInstructions(StreamReader sr, List<Instruction> instructions, bool onlyOneProc)
         {
+            ForeachInstruction(sr,
+                inst => instructions.Add(currentInstruction),
+                inst => currentInstruction != null && currentInstruction.type == InstructionType.Noop && onlyOneProc);
+        }
+
+        private void ForeachInstruction(StreamReader sr, Action<Instruction> foreachInstruction, Predicate<Instruction> shouldStop)
+        {
             GetNextInstruction(sr); // Grab the first instruction
 
             while (currentInstruction != null)
@@ -117,13 +135,16 @@ namespace EmeraldDream
                 {
                     currentInstruction.operandConsumer(sr);
                 }
-                instructions.Add(currentInstruction);
+
+                foreachInstruction(currentInstruction);
+
                 GetNextInstruction(sr);
 
-                if (currentInstruction != null && currentInstruction.type == InstructionType.Noop && onlyOneProc)
+                if (shouldStop(currentInstruction))
                 {
                     break;
                 }
+
             }
         }
 
@@ -175,7 +196,7 @@ namespace EmeraldDream
             }
             else if (line.StartsWith("start:"))
             {
-                currentInstruction.type = InstructionType.MainProcedure;
+                currentInstruction.type = InstructionType.MainProcedureLabel;
             }
             else if (line.StartsWith("set"))
             {
@@ -215,27 +236,102 @@ namespace EmeraldDream
             else if (line.StartsWith("choice"))
             {
                 currentInstruction.type = InstructionType.Menu;
+                if (line.StartsWith("choicetitle"))
+                {
+                    currentInstruction.operand.Add(line.Substring(12));
+                    currentInstruction.operandtype.Add(OperandType.String);
+                }
+                else
+                {
+                    ParseChoiceLine(line);
+                }
+                currentInstruction.operandConsumer = ConsumeMenuInstructions;
+            }
+            else if (line.StartsWith("end"))
+            {
+                currentInstruction.type = InstructionType.End;
+            }
+            else if (line.StartsWith("for"))
+            {
+                currentInstruction.type = InstructionType.For;
                 currentInstruction.operand.Add(line.Substring(4));
-                currentInstruction.operandtype.Add(OperandType.String);
+                currentInstruction.operandtype.Add(OperandType.Choicename);
             }
             else if (proclabelmatch.Success)
             {
-                currentInstruction.type = InstructionType.Procedure;
+                currentInstruction.type = InstructionType.ProcedureLabel;
                 currentInstruction.operand.Add(proclabelmatch.Groups["procname"].ToString());
                 currentInstruction.operandtype.Add(OperandType.ProcName);
             }
+            else
+            {
+                currentInstruction.type = InstructionType.Noop;
+            }
+        }
+
+        void ConsumeMenuInstructions(StreamReader sr)
+        {
+            Instruction mainInstruction = currentInstruction;
+            GetNextInstruction(sr);
+            List<Procedure> choiceprocs = new List<Procedure>();
+
+            int choices = 1;
+            while (currentInstruction != null && currentInstruction.type == InstructionType.Menu)
+            {
+                mainInstruction.operand.AddRange(currentInstruction.operand);
+                mainInstruction.operandtype.AddRange(currentInstruction.operandtype);
+                GetNextInstruction(sr);
+                choices++;
+            }
+
+            for (int i = 0; i < choices; i++)
+            {
+                if (currentInstruction.type != InstructionType.For)
+                {
+                    break;
+                }
+                Procedure p = new Procedure();
+
+                ForeachInstruction(sr,
+                    inst => p.instructions.Add(inst),
+                    inst => inst.type == InstructionType.End);
+                
+                GetNextInstruction(sr);
+
+                choiceprocs.Add(p);
+            }
+
+            mainInstruction.associatedProcs = choiceprocs;
+
+            peekedInstruction = currentInstruction;
+            currentInstruction = mainInstruction;
+        }
+
+        private void ParseChoiceLine(string line)
+        {
+            string[] tokens = line.Substring(7).Split(' ');
+            currentInstruction.operand.Add(tokens[0]);
+            currentInstruction.operandtype.Add(OperandType.Choicename);
+            currentInstruction.operand.Add(tokens[1]);
+            currentInstruction.operandtype.Add(OperandType.String);
         }
 
         int mainproc = 0;
         Dictionary<string, string> procnameToInstruction = new Dictionary<string, string>();
 
-        void CompileInstructions(List<Instruction> instructions, StringBuilder sb)
+        void CompileInstructions(List<Instruction> instructions, StringBuilder sb) {
+            CompileInstructions(instructions, sb, "");
+        }
+
+
+
+        void CompileInstructions(List<Instruction> instructions, StringBuilder sb, string suffix)
         {
             for (int n = 0; n < instructions.Count; n++)
             {
                 Instruction i = instructions[n];
 
-                sb.Append("static void Instruction" + n + " (Story story)\n");
+                sb.Append("static void " + NameInstruction(n, suffix) + " (Story story)\n");
                 sb.Append("{\n");
 
                 switch (i.type)
@@ -253,13 +349,13 @@ namespace EmeraldDream
                         sb.Append("story.narrationdialog.Open();\n");
                         if (ThereIsANextInstruction(instructions, n))
                         {
-                            sb.Append("story.narrationdialog.SetDoOnceOnClose(() => {Instruction" + (n + 1).ToString() + "(story); });\n");
+                            sb.Append("story.narrationdialog.SetDoOnceOnClose(() => {" + NameInstruction(n + 1, suffix) + "(story); });\n");
                         }
                         break;
-                    case InstructionType.MainProcedure:
+                    case InstructionType.MainProcedureLabel:
                         if (ThereIsANextInstruction(instructions, n))
                         {
-                            procnameToInstruction["main"] = "Instruction" + n + 1;
+                            procnameToInstruction["main"] = NameInstruction(n + 1, suffix);
                             mainproc = n + 1;
                         }
                         break;
@@ -275,7 +371,7 @@ namespace EmeraldDream
                         }
                         if (ThereIsANextInstruction(instructions, n))
                         {
-                            sb.Append("Instruction" + (n + 1).ToString() + "(story);\n");
+                            sb.Append(NameInstruction(n + 1, suffix) + "(story);\n");
                         }
                         break;
                     case InstructionType.Make:
@@ -287,15 +383,45 @@ namespace EmeraldDream
                         }
                         if (ThereIsANextInstruction(instructions, n))
                         {
-                            sb.Append("Instruction" + (n + 1).ToString() + "(story);\n");
+                            sb.Append(NameInstruction(n + 1, suffix) + "(story);\n");
                         }
                         break;
-                    case InstructionType.Procedure:
+                    case InstructionType.ProcedureLabel:
                         if (ThereIsANextInstruction(instructions, n))
                         {
-                            procnameToInstruction[i.operand[0]] = "Instruction" + n + 1;
-                            sb.Append("Instruction" + (n + 1).ToString() + "(story);\n");
+                            procnameToInstruction[i.operand[0]] = NameInstruction(n + 1, suffix);
+                            sb.Append(NameInstruction(n + 1, suffix) + "(story);\n");
                         }
+                        break;
+                    case InstructionType.Menu:
+
+                        Queue<string> operands = new Queue<string>();
+                        i.operand.ForEach(x => operands.Enqueue(x));
+
+                        if (i.operandtype[0] == OperandType.String)
+                        {
+                            // If there is a question set
+                            sb.Append("story.menudialog.SetQuestion(\"" + operands.Dequeue() + "\");\n");
+                        }
+                        else
+                        {
+                            sb.Append("story.menudialog.SetQuestion(\"\");\n");
+                        }
+
+                        while (operands.Count > 0)
+                        {
+                            // Consume the menu choices
+                            string choicename = operands.Dequeue();
+                            string choicetext = operands.Dequeue();
+                            sb.Append("story.menudialog.AddMenuItem(\"" + choicename + "\", \"" + choicetext + "\");\n");
+                        }
+
+                        if (ThereIsANextInstruction(instructions, n))
+                        {
+                            sb.Append("story.menudialog.SetDoOnceOnClose(() => {" + NameInstruction(n + 1, suffix) + "(story); });\n");
+                        }
+
+                        sb.Append("story.menudialog.Open();\n");
                         break;
                 }
 
@@ -304,9 +430,14 @@ namespace EmeraldDream
             };
         }
 
+        private static string NameInstruction(int n, string suffix)
+        {
+            return "Instruction" + n + suffix;
+        }
+
         private static bool ThereIsANextInstruction(List<Instruction> instructions, int n)
         {
-            return (n + 1) < instructions.Count && instructions[n + 1].type != InstructionType.Procedure && instructions[n + 1].type != InstructionType.MainProcedure;
+            return (n + 1) < instructions.Count && instructions[n + 1].type != InstructionType.ProcedureLabel && instructions[n + 1].type != InstructionType.MainProcedureLabel;
         }
 
         public MethodInfo GetMethod(string method)

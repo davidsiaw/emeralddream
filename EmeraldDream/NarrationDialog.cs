@@ -47,7 +47,7 @@ namespace EmeraldDream
             });
 
             this.KeyDown += new EventHandler<System.Windows.Forms.KeyEventArgs>((o, e) => {
-                if (!narrating)
+                if (e.KeyCode != System.Windows.Forms.Keys.None && !narrating)
                 {
                     if (complete || currentline + 1 >= lines.Count)
                     {

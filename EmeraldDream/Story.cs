@@ -209,15 +209,15 @@ namespace EmeraldDream
 
         public void ActivatePlayerControl()
         {
-            currentscene.KeyDown += new EventHandler<KeyEventArgs>(currentscene_KeyDown);
+            currentscene.DXKeyDown += new EventHandler<KeyEventArgs>(currentscene_DXKeyDown);
         }
 
         public void DeactivatePlayerControl()
         {
-            currentscene.KeyDown -= new EventHandler<KeyEventArgs>(currentscene_KeyDown);
+            currentscene.DXKeyDown -= new EventHandler<KeyEventArgs>(currentscene_DXKeyDown);
         }
 
-        void currentscene_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+        void currentscene_DXKeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
         {
             if (currentscene != null)
             {

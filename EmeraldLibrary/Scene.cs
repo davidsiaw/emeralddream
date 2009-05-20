@@ -162,6 +162,7 @@ namespace EmeraldLibrary
         public event EventHandler<MouseEventArgs> MouseUp;
         public event EventHandler<KeyEventArgs> KeyDown;
         public event EventHandler<KeyEventArgs> KeyUp;
+        public event EventHandler<KeyEventArgs> DXKeyDown;
 
         #region IInteractive Members
 
@@ -169,6 +170,26 @@ namespace EmeraldLibrary
         public bool Visible
         {
             get { return true; }
+        }
+
+        public void OnDXKeyDown(object sender, KeyEventArgs e)
+        {
+            for (int i = layers.Count - 1; i > -1; i--)
+            {
+                if (layers[i] is IInteractive)
+                {
+                    IInteractive l = layers[i] as IInteractive;
+                    if (l.Visible)
+                    {
+                        l.OnDXKeyDown(sender, e);
+                        return;
+                    }
+                }
+            }
+            if (DXKeyDown != null)
+            {
+                DXKeyDown(sender, e);
+            }
         }
 
         #endregion
