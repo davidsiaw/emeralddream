@@ -51,6 +51,7 @@ namespace EmeraldDream
 
         class Procedure
         {
+            public string name;
             public List<Instruction> instructions = new List<Instruction>();
             public int returnInstruction = 0;
         }
@@ -84,6 +85,8 @@ namespace EmeraldDream
             StringBuilder sb = new StringBuilder();
 
             sb.Append("using System;\n");
+            sb.Append("using System.Collections.Generic;\n");
+            sb.Append("using System.Collections;\n");
             sb.Append("using EmeraldDream;\n");
             sb.Append("using EmeraldLibrary;\n");
             sb.Append("using System.Windows.Forms;\n");
@@ -291,6 +294,7 @@ namespace EmeraldDream
                     break;
                 }
                 Procedure p = new Procedure();
+                p.name = currentInstruction.operand[0];
 
                 ForeachInstruction(sr,
                     inst => p.instructions.Add(inst),
@@ -330,6 +334,7 @@ namespace EmeraldDream
             for (int n = 0; n < instructions.Count; n++)
             {
                 Instruction i = instructions[n];
+                List<Procedure> subprocs = new List<Procedure>();
 
                 sb.Append("static void " + NameInstruction(n, suffix) + " (Story story)\n");
                 sb.Append("{\n");
@@ -346,11 +351,11 @@ namespace EmeraldDream
 
                         sb.Append("};\n");
                         sb.Append("story.narrationdialog.SetNarration(narration);\n");
-                        sb.Append("story.narrationdialog.Open();\n");
                         if (ThereIsANextInstruction(instructions, n))
                         {
                             sb.Append("story.narrationdialog.SetDoOnceOnClose(() => {" + NameInstruction(n + 1, suffix) + "(story); });\n");
                         }
+                        sb.Append("story.narrationdialog.Open();\n");
                         break;
                     case InstructionType.MainProcedureLabel:
                         if (ThereIsANextInstruction(instructions, n))
@@ -398,6 +403,8 @@ namespace EmeraldDream
                         Queue<string> operands = new Queue<string>();
                         i.operand.ForEach(x => operands.Enqueue(x));
 
+                        sb.Append("story.menudialog.ClearMenuItems();\n");
+
                         if (i.operandtype[0] == OperandType.String)
                         {
                             // If there is a question set
@@ -408,6 +415,8 @@ namespace EmeraldDream
                             sb.Append("story.menudialog.SetQuestion(\"\");\n");
                         }
 
+                        sb.Append("Dictionary<string, Action<Story>> choiceToActionMap = new Dictionary<string, Action<Story>>();\n");
+
                         while (operands.Count > 0)
                         {
                             // Consume the menu choices
@@ -416,18 +425,44 @@ namespace EmeraldDream
                             sb.Append("story.menudialog.AddMenuItem(\"" + choicename + "\", \"" + choicetext + "\");\n");
                         }
 
-                        if (ThereIsANextInstruction(instructions, n))
-                        {
-                            sb.Append("story.menudialog.SetDoOnceOnClose(() => {" + NameInstruction(n + 1, suffix) + "(story); });\n");
-                        }
+                        int count = 0;
+                        i.associatedProcs.ForEach(p => {
+                            sb.Append("choiceToActionMap[\"" + p.name + "\"] = " + NameInstruction(0, MakeSuffix(n, count)) + ";\n");
+                            
+                            // Make a return instruction
+                            Instruction retinst = new Instruction();
+                            retinst.type = InstructionType.Jump;
+                            retinst.operand.Add(NameInstruction(n + 1, suffix));
+                            retinst.operandtype.Add(OperandType.ProcName);
+
+                            p.instructions.Add(retinst);
+
+                            count++;
+                        });
+                        subprocs = i.associatedProcs;
+
+                        sb.Append("story.menudialog.SetDoOnceOnClose(() => {choiceToActionMap[story.menudialog.SelectedItem](story); });\n");
 
                         sb.Append("story.menudialog.Open();\n");
+                        break;
+                    case InstructionType.Jump:
+                        sb.Append(i.operand[0] + "(story);\n");
                         break;
                 }
 
                 sb.Append("}\n");
 
-            };
+                int c = 0;
+                subprocs.ForEach(p => {
+                    CompileInstructions(p.instructions, sb, MakeSuffix(n, c));
+                    c++;
+                });
+            }
+        }
+
+        private static string MakeSuffix(int n, int c)
+        {
+            return "_i" + n + "_p" + c;
         }
 
         private static string NameInstruction(int n, string suffix)

@@ -1,0 +1,21 @@
+[box0]
+type:box
+location:10,10
+use:
+say Ok. choose...
+choicetitle Your favorite character:
+choice a Haruhi 
+choice b Hinagiku
+for a
+say LOL. Sadist.
+end
+for b
+say Good choice. I applaud you.
+end
+say You have made your choice! Congratulations
+
+[box1]
+type:box
+location:12,12
+use:
+say I have no interest in ordinary humans. If you are an alien, esper or time traveller, come to me!

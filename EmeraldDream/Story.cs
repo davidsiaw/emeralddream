@@ -210,11 +210,26 @@ namespace EmeraldDream
         public void ActivatePlayerControl()
         {
             currentscene.DXKeyDown += new EventHandler<KeyEventArgs>(currentscene_DXKeyDown);
+            currentscene.KeyDown += new EventHandler<KeyEventArgs>(currentscene_KeyDown);
+        }
+
+        void currentscene_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (currentscene != null)
+            {
+                switch (e.KeyCode)
+                {
+                    case Keys.Enter:
+                        InteractWithObjectAhead();
+                        break;
+                }
+            }
         }
 
         public void DeactivatePlayerControl()
         {
             currentscene.DXKeyDown -= new EventHandler<KeyEventArgs>(currentscene_DXKeyDown);
+            currentscene.KeyDown -= new EventHandler<KeyEventArgs>(currentscene_KeyDown);
         }
 
         void currentscene_DXKeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
@@ -234,9 +249,6 @@ namespace EmeraldDream
                         break;
                     case Keys.Right:
                         currentscene.Move(Direction.Right);
-                        break;
-                    case Keys.Enter:
-                        InteractWithObjectAhead();
                         break;
                 }
             }

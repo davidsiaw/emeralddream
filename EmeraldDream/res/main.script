@@ -1,0 +1,5 @@
+﻿start:
+set map firstmap
+make object orb thehero
+set object thehero
+say If you want to interact with anything, just press [Enter] while facing it.
