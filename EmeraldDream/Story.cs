@@ -179,7 +179,7 @@ namespace EmeraldDream
         {
             // The script path has all the resource and script files needed for the story.
             // First we read the main script
-            Script main = new Script("MainScript", "edit/main.script");
+            Script main = new Script("MainScript", "res/main.script");
             main.Execute(this);
         }
 

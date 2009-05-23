@@ -73,7 +73,7 @@ namespace MapMaker
             this.win = win;
 
             // Grab tiles
-            string[] files = Directory.GetFiles("edit/res/tiles", "*.png");
+            string[] files = Directory.GetFiles("res/res/tiles", "*.png");
             files.ToList().ForEach(x => {
                 RadioButton cb = new RadioButton();
                 cb.Appearance = Appearance.Button;
@@ -147,7 +147,7 @@ namespace MapMaker
         {
             SaveFileDialog sfd = new SaveFileDialog();
 
-            sfd.InitialDirectory = Path.Combine(Directory.GetCurrentDirectory(), "edit/maps");
+            sfd.InitialDirectory = Path.Combine(Directory.GetCurrentDirectory(), "res/maps");
             sfd.ShowDialog();
             if (!string.IsNullOrEmpty(sfd.FileName))
             {

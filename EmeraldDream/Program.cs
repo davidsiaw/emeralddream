@@ -31,7 +31,7 @@ namespace EmeraldDream
 
             GameWindow g = new GameWindow();
 
-            Story s = new Story(g, "edit");
+            Story s = new Story(g, "res");
 
             s.LoadNew();
 
