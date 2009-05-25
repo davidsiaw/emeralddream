@@ -14,6 +14,16 @@ namespace MapMaker
         public Editor()
         {
             InitializeComponent();
+
+            // load up the maps
+
         }
+
+        private void pictureBox1_Resize(object sender, EventArgs e)
+        {
+
+        }
+
+        
     }
 }

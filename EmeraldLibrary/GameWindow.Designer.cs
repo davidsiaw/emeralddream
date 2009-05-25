@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.canvas = new System.Windows.Forms.PictureBox();
+            this.canvas = new GameControl(this);
             ((System.ComponentModel.ISupportInitialize)(this.canvas)).BeginInit();
             this.SuspendLayout();
             // 
@@ -40,9 +40,6 @@
             this.canvas.Size = new System.Drawing.Size(800, 600);
             this.canvas.TabIndex = 0;
             this.canvas.TabStop = false;
-            this.canvas.MouseMove += new System.Windows.Forms.MouseEventHandler(this.canvas_MouseMove);
-            this.canvas.MouseDown += new System.Windows.Forms.MouseEventHandler(this.canvas_MouseDown);
-            this.canvas.MouseUp += new System.Windows.Forms.MouseEventHandler(this.canvas_MouseUp);
             // 
             // GameWindow
             // 
@@ -62,7 +59,7 @@
 
         #endregion
 
-        private System.Windows.Forms.PictureBox canvas;
+        private GameControl canvas;
     }
 }
 

@@ -436,7 +436,7 @@ namespace EmeraldLibrary
                 {
                     if (floorLevel[xx, yy] != null)
                     {
-                        game.tiles.DrawTile(g, floorLevel[xx, yy].TileIndex, xcount * GameWindow.TileSize + viewportx, ycount * GameWindow.TileSize + viewporty);
+                        game.Tiles.DrawTile(g, floorLevel[xx, yy].TileIndex, xcount * GameWindow.TileSize + viewportx, ycount * GameWindow.TileSize + viewporty);
                     }
                     ycount++;
                 }
@@ -469,7 +469,7 @@ namespace EmeraldLibrary
                                     objectToSubx[obj] += moveamount;
                                     break;
                             }
-                            game.tiles.DrawTile(g, obj.TileIndex, xcount * GameWindow.TileSize + viewportx + objectToSubx[obj], ycount * GameWindow.TileSize + viewporty + objectToSuby[obj]);
+                            game.Tiles.DrawTile(g, obj.TileIndex, xcount * GameWindow.TileSize + viewportx + objectToSubx[obj], ycount * GameWindow.TileSize + viewporty + objectToSuby[obj]);
 
                             if (Math.Abs(objectToSuby[obj]) >= GameWindow.TileSize || Math.Abs(objectToSubx[obj]) >= GameWindow.TileSize)
                             {
@@ -482,7 +482,7 @@ namespace EmeraldLibrary
                         }
                         else
                         {
-                            game.tiles.DrawTile(g, obj.TileIndex, xcount * GameWindow.TileSize + viewportx, ycount * GameWindow.TileSize + viewporty);
+                            game.Tiles.DrawTile(g, obj.TileIndex, xcount * GameWindow.TileSize + viewportx, ycount * GameWindow.TileSize + viewporty);
                         }
                     }
                     ycount++;
@@ -498,7 +498,7 @@ namespace EmeraldLibrary
                 {
                     if (ceilingLevel[xx, yy] != null)
                     {
-                        game.tiles.DrawTile(g, ceilingLevel[xx, yy].TileIndex, xcount * GameWindow.TileSize + viewportx, ycount * GameWindow.TileSize + viewporty);
+                        game.Tiles.DrawTile(g, ceilingLevel[xx, yy].TileIndex, xcount * GameWindow.TileSize + viewportx, ycount * GameWindow.TileSize + viewporty);
                     }
                     ycount++;
                 }

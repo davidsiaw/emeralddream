@@ -33,9 +33,9 @@ namespace EmeraldLibrary
         }
 
         Timer t = new Timer();
-        GameWindow game = null;
+        GameControl game = null;
 
-        public void Start(GameWindow game)
+        public void Start(GameControl game)
         {
             this.game = game;
             t.Interval = 1000 / 30;
