@@ -33,24 +33,24 @@
             // 
             // listBox1
             // 
-            this.listBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.listBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listBox1.FormattingEnabled = true;
             this.listBox1.IntegralHeight = false;
-            this.listBox1.Location = new System.Drawing.Point(12, 12);
+            this.listBox1.Location = new System.Drawing.Point(0, 0);
             this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(268, 585);
+            this.listBox1.Size = new System.Drawing.Size(292, 273);
             this.listBox1.TabIndex = 0;
             // 
             // MapList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(292, 609);
+            this.ClientSize = new System.Drawing.Size(292, 273);
             this.Controls.Add(this.listBox1);
+            this.DockType = DockDotNET.DockContainerType.ToolWindow;
+            this.IsVisible = true;
             this.Name = "MapList";
-            this.Text = "MapList";
+            this.Text = "Map List";
             this.ResumeLayout(false);
 
         }

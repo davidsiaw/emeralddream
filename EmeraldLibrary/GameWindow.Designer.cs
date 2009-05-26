@@ -28,15 +28,19 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.canvas = new GameControl(this);
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GameWindow));
+            this.canvas = new EmeraldLibrary.GameControl();
             ((System.ComponentModel.ISupportInitialize)(this.canvas)).BeginInit();
             this.SuspendLayout();
             // 
             // canvas
             // 
             this.canvas.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.canvas.Image = ((System.Drawing.Image)(resources.GetObject("canvas.Image")));
             this.canvas.Location = new System.Drawing.Point(0, 0);
+            this.canvas.MinimumSize = new System.Drawing.Size(800, 600);
             this.canvas.Name = "canvas";
+            this.canvas.Scene = null;
             this.canvas.Size = new System.Drawing.Size(800, 600);
             this.canvas.TabIndex = 0;
             this.canvas.TabStop = false;
@@ -59,7 +63,9 @@
 
         #endregion
 
-        private GameControl canvas;
+        public GameControl canvas;
+
+
     }
 }
 

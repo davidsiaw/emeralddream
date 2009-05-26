@@ -111,7 +111,7 @@ namespace EmeraldDream
                     int[,] floor = (int[,])bf.Deserialize(floormap);
                     int w = floor.GetUpperBound(0) + 1;
                     int h = floor.GetUpperBound(1) + 1;
-                    m = new Map(g, w, h);
+                    m = new Map(g.canvas, w, h);
                     
                     Dictionary<int, string> tilenumToName = new Dictionary<int, string>();
                     while (!floortiles.EndOfStream)

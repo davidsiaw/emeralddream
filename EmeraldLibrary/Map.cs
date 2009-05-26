@@ -11,7 +11,7 @@ namespace EmeraldLibrary
 {
     public class Map
     {
-        GameWindow game;
+        GameControl game;
         MapFloor[,] floorLevel;
         MapObject[,] characterLevel;
         MapObject[,] ceilingLevel;
@@ -65,7 +65,7 @@ namespace EmeraldLibrary
 
                     camx = value;
 
-                    x = camx - (GameWindow.ScreenWidth / 2 / 32);
+                    x = camx - (game.Width / 2 / 32);
 
                     if (Submovementdirection == Direction.Right)
                     {
@@ -78,17 +78,17 @@ namespace EmeraldLibrary
                         x = 0;
                         Submovementdirection = null;
                     }
-                    else if (x + GameWindow.ScreenWidth / 32 >= w)
+                    else if (x + game.Width / 32 >= w)
                     {
-                        if (x + GameWindow.ScreenWidth / 32 == w && Submovementdirection == Direction.Left)
+                        if (x + game.Width / 32 == w && Submovementdirection == Direction.Left)
                         {
                             Submovementdirection = null;
                         }
-                        if (x + GameWindow.ScreenWidth / 32 > w)
+                        if (x + game.Width / 32 > w)
                         {
                             Submovementdirection = null;
                         }
-                        x = w - GameWindow.ScreenWidth / 32;
+                        x = w - game.Width / 32;
                     }
                 }
             }
@@ -121,7 +121,7 @@ namespace EmeraldLibrary
 
                     camy = value;
 
-                    y = camy - (GameWindow.ScreenHeight / 2 / 32);
+                    y = camy - (game.Height / 2 / 32);
 
                     if (Submovementdirection == Direction.Down)
                     {
@@ -133,24 +133,24 @@ namespace EmeraldLibrary
                         y = 0;
                         Submovementdirection = null;
                     }
-                    else if (y + GameWindow.ScreenHeight / 32 >= h)
+                    else if (y + game.Height / 32 >= h)
                     {
-                        if (y + GameWindow.ScreenHeight / 32 == h && Submovementdirection == Direction.Up)
+                        if (y + game.Height / 32 == h && Submovementdirection == Direction.Up)
                         {
                             Submovementdirection = null;
                         }
-                        if (y + GameWindow.ScreenHeight / 32 > h)
+                        if (y + game.Height / 32 > h)
                         {
                             Submovementdirection = null;
                         }
-                        y = h - GameWindow.ScreenHeight / 32;
+                        y = h - game.Height / 32;
                     }
                 }
             }
         }
 
 
-        public Map(GameWindow game, int w, int h)
+        public Map(GameControl game, int w, int h)
         {
             this.game = game;
             floorLevel = new MapFloor[w, h];
@@ -366,26 +366,26 @@ namespace EmeraldLibrary
             int yBottomMost = h;
 
             // If the size of the map is equal or less than the screen size, we center it on the screen
-            if (w * GameWindow.TileSize <= GameWindow.ScreenWidth)
+            if (w * GameWindow.TileSize <= game.Width)
             {
-                viewportx = (GameWindow.ScreenWidth / 2) - (w * GameWindow.TileSize / 2);
+                viewportx = (game.Width / 2) - (w * GameWindow.TileSize / 2);
                 x = 0;
             }
             else
             {
                 xLeftMost = x;
-                xRightMost = x + GameWindow.ScreenWidth / 32 + 1;
+                xRightMost = x + game.Width / 32 + 1;
             }
 
-            if (h * GameWindow.TileSize <= GameWindow.ScreenHeight)
+            if (h * GameWindow.TileSize <= game.Height)
             {
-                viewporty = (GameWindow.ScreenHeight / 2) - (h * GameWindow.TileSize / 2);
+                viewporty = (game.Height / 2) - (h * GameWindow.TileSize / 2);
                 y = 0;
             }
             else
             {
                 yTopMost = y;
-                yBottomMost = y + GameWindow.ScreenHeight / 32 + 2;
+                yBottomMost = y + game.Height / 32 + 2;
             }
 
             if (Submovementdirection != null)
@@ -436,7 +436,7 @@ namespace EmeraldLibrary
                 {
                     if (floorLevel[xx, yy] != null)
                     {
-                        game.Tiles.DrawTile(g, floorLevel[xx, yy].TileIndex, xcount * GameWindow.TileSize + viewportx, ycount * GameWindow.TileSize + viewporty);
+                        game.tiles.DrawTile(g, floorLevel[xx, yy].TileIndex, xcount * GameWindow.TileSize + viewportx, ycount * GameWindow.TileSize + viewporty);
                     }
                     ycount++;
                 }
@@ -469,7 +469,7 @@ namespace EmeraldLibrary
                                     objectToSubx[obj] += moveamount;
                                     break;
                             }
-                            game.Tiles.DrawTile(g, obj.TileIndex, xcount * GameWindow.TileSize + viewportx + objectToSubx[obj], ycount * GameWindow.TileSize + viewporty + objectToSuby[obj]);
+                            game.tiles.DrawTile(g, obj.TileIndex, xcount * GameWindow.TileSize + viewportx + objectToSubx[obj], ycount * GameWindow.TileSize + viewporty + objectToSuby[obj]);
 
                             if (Math.Abs(objectToSuby[obj]) >= GameWindow.TileSize || Math.Abs(objectToSubx[obj]) >= GameWindow.TileSize)
                             {
@@ -482,7 +482,7 @@ namespace EmeraldLibrary
                         }
                         else
                         {
-                            game.Tiles.DrawTile(g, obj.TileIndex, xcount * GameWindow.TileSize + viewportx, ycount * GameWindow.TileSize + viewporty);
+                            game.tiles.DrawTile(g, obj.TileIndex, xcount * GameWindow.TileSize + viewportx, ycount * GameWindow.TileSize + viewporty);
                         }
                     }
                     ycount++;
@@ -498,7 +498,7 @@ namespace EmeraldLibrary
                 {
                     if (ceilingLevel[xx, yy] != null)
                     {
-                        game.Tiles.DrawTile(g, ceilingLevel[xx, yy].TileIndex, xcount * GameWindow.TileSize + viewportx, ycount * GameWindow.TileSize + viewporty);
+                        game.tiles.DrawTile(g, ceilingLevel[xx, yy].TileIndex, xcount * GameWindow.TileSize + viewportx, ycount * GameWindow.TileSize + viewporty);
                     }
                     ycount++;
                 }

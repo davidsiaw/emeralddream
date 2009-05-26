@@ -13,18 +13,18 @@ namespace EmeraldLibrary
     public partial class GameControl : PictureBox
     {
         public static int TileSize = 32;
-        public const int ScreenWidth = 800;
-        public const int ScreenHeight = 600;
+        //public int ScreenWidth = 800;
+        //public int ScreenHeight = 600;
 
         DXKeyboard kb;
 
-        public GameControl(Form mainform)
+        public GameControl()
         {
             InitializeComponent();
             ClearAll();
-            Image = b;
+            Image = new Bitmap(Width, Height);
 
-            kb = new DXKeyboard(mainform);
+            kb = new DXKeyboard(Form.ActiveForm);
             kb.keyDown = state => {
                 KeyEventArgs kea;
                 Keys k = Keys.None;
@@ -52,12 +52,18 @@ namespace EmeraldLibrary
                 Game_DXKeyDown(this, kea);
             };
 
+            this.Resize += new EventHandler(GameControl_Resize);
+
+        }
+
+        void GameControl_Resize(object sender, EventArgs e)
+        {
+            Image = new Bitmap(Width, Height);
         }
 
 
         internal TileBank tiles = new TileBank();
         Scene m_scene = null;
-        Bitmap b = new Bitmap(ScreenWidth, ScreenHeight);
         Font deffont = new Font(FontFamily.GenericMonospace, 10);
 
         public Scene Scene
@@ -72,10 +78,12 @@ namespace EmeraldLibrary
                 {
                     m_scene.Stop();
                 }
+                if (value != null)
+                {
+                    m_scene = value;
 
-                m_scene = value;
-
-                m_scene.Start(this);
+                    m_scene.Start(this);
+                }
             }
         }
    
@@ -123,14 +131,17 @@ namespace EmeraldLibrary
 
         public void ClearAll()
         {
-            Draw(g => { g.FillRectangle(new SolidBrush(Color.Black), new Rectangle(0, 0, ScreenWidth, ScreenHeight)); });
+            Draw(g => { g.FillRectangle(new SolidBrush(Color.Black), new Rectangle(0, 0, Width, Height)); });
         }
 
         public void Draw(Action<Graphics> drawfunc)
         {
-            using (Graphics g = Graphics.FromImage(b))
+            if (Image != null)
             {
-                drawfunc(g);
+                using (Graphics g = Graphics.FromImage(Image))
+                {
+                    drawfunc(g);
+                }
             }
         }
 
@@ -157,11 +168,6 @@ namespace EmeraldLibrary
         public int GetTileByName(string name)
         {
             return tiles.GetTileByName(name);
-        }
-
-        private void GameWindow_KeyPress(object sender, KeyPressEventArgs e)
-        {
-
         }
 
         private void GameWindow_KeyDown(object sender, KeyEventArgs e)

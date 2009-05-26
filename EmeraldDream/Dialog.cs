@@ -35,7 +35,7 @@ namespace EmeraldDream
 
         int x = 0;
         int y = 400;
-        int w = GameWindow.ScreenWidth;
+        int w = 800;
         int h = 200;
 
         int h0;

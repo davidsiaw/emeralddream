@@ -14,13 +14,12 @@ namespace EmeraldLibrary
     public partial class GameWindow : Form
     {
         public static int TileSize = 32;
-        public const int ScreenWidth = 800;
-        public const int ScreenHeight = 600;
 
 
         public GameWindow()
         {
             InitializeComponent();
+            this.canvas.Size = new System.Drawing.Size(800, 600);
         }
 
 
