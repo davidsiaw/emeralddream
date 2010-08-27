@@ -37,6 +37,7 @@ namespace EmeraldDream
             ObjectName,
             MapName,
             ProcName,
+            ImageName,
             Choicename,
         }
 
@@ -214,6 +215,10 @@ namespace EmeraldDream
                 {
                     currentInstruction.operandtype.Add(OperandType.ObjectName);
                 }
+                else if (tokens[1] == ("image"))
+                {
+                    currentInstruction.operandtype.Add(OperandType.ImageName);
+                }
                 else
                 {
                     throw new ScriptException("I don't know what a {0} is", tokens[1]);
@@ -241,7 +246,14 @@ namespace EmeraldDream
                 currentInstruction.type = InstructionType.Menu;
                 if (line.StartsWith("choicetitle"))
                 {
-                    currentInstruction.operand.Add(line.Substring(12));
+                    if (line.Split(' ').Length > 1)
+                    {
+                        currentInstruction.operand.Add(line.Substring(12));
+                    }
+                    else
+                    {
+                        currentInstruction.operand.Add("");
+                    }
                     currentInstruction.operandtype.Add(OperandType.String);
                 }
                 else
@@ -372,6 +384,9 @@ namespace EmeraldDream
                                 break;
                             case OperandType.ObjectName:
                                 sb.Append("story.ChangeCharacter(\"" + i.operand[0] + "\");\n");
+                                break;
+                            case OperandType.ImageName:
+                                sb.Append("story.SetImage(\"" + i.operand[0] + "\");\n");
                                 break;
                         }
                         if (ThereIsANextInstruction(instructions, n))

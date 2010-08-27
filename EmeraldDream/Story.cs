@@ -11,6 +11,7 @@ using System.Collections.Specialized;
 using System.Text.RegularExpressions;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Forms;
+using System.Drawing;
 
 namespace EmeraldDream
 {
@@ -27,25 +28,37 @@ namespace EmeraldDream
 
         Dictionary<string, MapObject> objects = new Dictionary<string, MapObject>();
 
+        Dictionary<string, Image> images = new Dictionary<string, Image>();
 
+        TileBank tb = null;
 
 
         string scriptpath;
         public Story(GameWindow g, string scriptpath)
         {
             this.game = g;
+            this.tb = g.Tiles;
             this.scriptpath = scriptpath;
+
+            // Grab images
+            string[] imagefiles = Directory.GetFiles(Path.Combine(scriptpath, "res/images"), "*.jpg");
+            imagefiles.ToList().ForEach(x =>
+            {
+                string imagename = Path.GetFileName(x);
+                images.Add(imagename, Image.FromFile(x));
+            });
+
 
             // Grab tiles
             string[] files = Directory.GetFiles(Path.Combine(scriptpath, "res/tiles"), "*.png");
             files.ToList().ForEach(x =>
             {
                 string tilename = Path.GetFileNameWithoutExtension(x);
-                g.LoadTile(tilename, x);
+                tb.LoadTile(tilename, x);
             });
 
 
-            ObjectsAssembly fa = new ObjectsAssembly(g);
+            ObjectsAssembly fa = new ObjectsAssembly(tb);
 
             // Grab floor types
             string[] floors = Directory.GetFiles(Path.Combine(scriptpath, "res/floors"), "*.floor");
@@ -75,7 +88,7 @@ namespace EmeraldDream
             string[] maps = Directory.GetDirectories(Path.Combine(scriptpath, "maps"));
             maps.ToList().ForEach(x =>
             {
-                Map m = LoadMap(g,x);
+                Map m = LoadMap(g.canvas,x);
                 string mapname = Path.GetFileNameWithoutExtension(x);
                 this.maps[mapname] = m;
             });
@@ -86,8 +99,9 @@ namespace EmeraldDream
             this.m = null;
             narrationdialog = new NarrationDialog(30, 400, 740, 200);
             menudialog = new MenuDialog(30, 400, 740, 200);
+            staticImage = new StaticImage(images);
 
-
+            currentscene.AddLayer(staticImage);
             currentscene.AddLayer(narrationdialog);
             currentscene.AddLayer(menudialog);
 
@@ -98,7 +112,7 @@ namespace EmeraldDream
             //menudialog.Visible = true;
         }
 
-        Map LoadMap(GameWindow g, string mapdir)
+        Map LoadMap(GameControl g, string mapdir)
         {
             Map m;
             BinaryFormatter bf = new BinaryFormatter();
@@ -111,7 +125,7 @@ namespace EmeraldDream
                     int[,] floor = (int[,])bf.Deserialize(floormap);
                     int w = floor.GetUpperBound(0) + 1;
                     int h = floor.GetUpperBound(1) + 1;
-                    m = new Map(g.canvas, w, h);
+                    m = new Map(g, w, h);
                     
                     Dictionary<int, string> tilenumToName = new Dictionary<int, string>();
                     while (!floortiles.EndOfStream)
@@ -183,6 +197,11 @@ namespace EmeraldDream
             main.Execute(this);
         }
 
+        public void SetImage(string image)
+        {
+            staticImage.Image = image;
+        }
+
         public void ChangeMap(string mapName)
         {
             DeactivatePlayerControl();
@@ -213,6 +232,12 @@ namespace EmeraldDream
             currentscene.KeyDown += new EventHandler<KeyEventArgs>(currentscene_KeyDown);
         }
 
+        public void DeactivatePlayerControl()
+        {
+            currentscene.DXKeyDown -= new EventHandler<KeyEventArgs>(currentscene_DXKeyDown);
+            currentscene.KeyDown -= new EventHandler<KeyEventArgs>(currentscene_KeyDown);
+        }
+
         void currentscene_KeyDown(object sender, KeyEventArgs e)
         {
             if (currentscene != null)
@@ -224,12 +249,6 @@ namespace EmeraldDream
                         break;
                 }
             }
-        }
-
-        public void DeactivatePlayerControl()
-        {
-            currentscene.DXKeyDown -= new EventHandler<KeyEventArgs>(currentscene_DXKeyDown);
-            currentscene.KeyDown -= new EventHandler<KeyEventArgs>(currentscene_KeyDown);
         }
 
         void currentscene_DXKeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
@@ -292,62 +311,6 @@ namespace EmeraldDream
             }
         }
 
-        //struct Task
-        //{
-        //    public Action<Story> action;
-        //    public bool needsNarrationDialog;
-        //}
-
-        //Dictionary<string, Queue<Task>> scriptsessions = new Dictionary<string, Queue<Task>>();
-
-        // Scripting stuff
-        //public void AddScriptTask(string scriptname, Action<Story> task, bool needsGlobalResource)
-        //{
-        //    if (!scriptsessions.ContainsKey(scriptname))
-        //    {
-        //        scriptsessions[scriptname] = new Queue<Task>();
-        //    }
-
-        //    Task t = new Task();
-        //    t.action = task;
-        //    t.needsNarrationDialog = needsGlobalResource;
-        //    scriptsessions[scriptname].Enqueue(t);
-        //}
-
-        //public void ScriptTaskDone(string scriptname)
-        //{
-        //    RunScriptTasks(scriptname);
-        //}
-
-        //void RunScriptTasks(string scriptname)
-        //{
-        //    if (scriptsessions.ContainsKey(scriptname))
-        //    {
-        //        if (scriptsessions[scriptname].Count != 0)
-        //        {
-        //            if (scriptsessions[scriptname].Peek().needsNarrationDialog && narrationDialogLocked)
-        //            {
-        //                // some kind of error handling or set up a retry or something
-        //            }
-        //            else
-        //            {
-        //                scriptsessions[scriptname].Dequeue().action(this);
-        //            }
-        //        }
-        //    }
-        //}
-
-        //public void LockNarrationDialog()
-        //{
-        //    narrationDialogLocked = true;
-        //}
-
-        //public void UnlockNarrationDialog()
-        //{
-        //    narrationDialogLocked = false;
-        //}
-
-        //bool narrationDialogLocked = false;
 
         // The story needs a state. So here it is
         public Map m;
@@ -355,15 +318,16 @@ namespace EmeraldDream
         public PlayScene currentscene;
         public NarrationDialog narrationdialog;
         public MenuDialog menudialog;
+        public StaticImage staticImage;
     }
 
-    class ObjectsAssembly
+    public class ObjectsAssembly
     {
         CodeLoader cl = new CodeLoader();
         StringBuilder sb = new StringBuilder();
-        GameWindow gw = new GameWindow();
+        TileBank gw = new TileBank();
 
-        public ObjectsAssembly(GameWindow gw)
+        public ObjectsAssembly(TileBank gw)
         {
             sb.Append("using System;\n");
             sb.Append("using EmeraldDream;\n");
