@@ -85,30 +85,21 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <Content Include="res\main.script">
+    <None Include="res\floors\grass.floor">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="res\maps\firstmap\floor.map">
+    </None>
+    <None Include="res\floors\wall.floor">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="res\maps\firstmap\floor.tiles">
+    </None>
+    <None Include="res\objects\box.desc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="res\maps\firstmap\objects.list">
+    </None>
+    <None Include="res\objects\orb.desc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="res\res\floors\grass.floor">
+    </None>
+    <None Include="res\window\Thumbs.db">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="res\res\floors\wall.floor">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="res\res\objects\box.desc">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="res\res\objects\orb.desc">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </None>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
@@ -125,69 +116,73 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="res\res\tiles\box.png">
+    <Content Include="res\images\title800x600.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="res\res\tiles\grass.png">
+    <Content Include="res\main.script" />
+    <Content Include="res\maps\firstmap\floor.map" />
+    <Content Include="res\maps\firstmap\floor.tiles" />
+    <Content Include="res\maps\firstmap\objects.list" />
+    <Content Include="res\tiles\box.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="res\res\tiles\orbdown.png">
+    <Content Include="res\tiles\grass.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="res\res\tiles\orbleft.png">
+    <Content Include="res\tiles\orbdown.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="res\res\tiles\orbright.png">
+    <Content Include="res\tiles\orbleft.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="res\res\tiles\orbup.png">
+    <Content Include="res\tiles\orbright.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="res\res\tiles\wall.png">
+    <Content Include="res\tiles\orbup.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="res\res\window\b.png">
+    <Content Include="res\tiles\wall.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="res\res\window\bl.png">
+    <Content Include="res\window\b.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="res\res\window\br.png">
+    <Content Include="res\window\bl.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="res\res\window\c.png">
+    <Content Include="res\window\br.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="res\res\window\hoyts.jpg">
+    <Content Include="res\window\c.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="res\res\window\hoyts.png">
+    <Content Include="res\window\hoyts.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="res\res\window\l.png">
+    <Content Include="res\window\hoyts.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="res\res\window\next.jpg">
+    <Content Include="res\window\l.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="res\res\window\next.png">
+    <Content Include="res\window\next.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="res\res\window\r.png">
+    <Content Include="res\window\next.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="res\res\window\t.png">
+    <Content Include="res\window\r.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="res\res\window\tl.png">
+    <Content Include="res\window\t.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="res\res\window\tr.png">
+    <Content Include="res\window\tl.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="res\res\images\" />
+    <Content Include="res\window\tr.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -197,4 +192,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <PropertyGroup>
+    <PreBuildEvent>xcopy "$(ProjectDir)res\*.*" "$(TargetDir)\res" /e /i /h /y</PreBuildEvent>
+  </PropertyGroup>
 </Project>

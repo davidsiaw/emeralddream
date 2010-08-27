@@ -11,7 +11,7 @@ namespace EmeraldDream
         static Font font = new Font("Lucida Console", 20);
 
 
-        Image downicon = Bitmap.FromFile("res/res/window/next.png");
+        Image downicon = Bitmap.FromFile("res/window/next.png");
 
         public NarrationDialog(int x, int y, int w, int h)
             : base(x, y, w, h)

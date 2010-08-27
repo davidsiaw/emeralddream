@@ -41,7 +41,7 @@ namespace EmeraldDream
             this.scriptpath = scriptpath;
 
             // Grab images
-            string[] imagefiles = Directory.GetFiles(Path.Combine(scriptpath, "res/images"), "*.jpg");
+            string[] imagefiles = Directory.GetFiles(Path.Combine(scriptpath, "images"), "*.jpg");
             imagefiles.ToList().ForEach(x =>
             {
                 string imagename = Path.GetFileName(x);
@@ -50,7 +50,7 @@ namespace EmeraldDream
 
 
             // Grab tiles
-            string[] files = Directory.GetFiles(Path.Combine(scriptpath, "res/tiles"), "*.png");
+            string[] files = Directory.GetFiles(Path.Combine(scriptpath, "tiles"), "*.png");
             files.ToList().ForEach(x =>
             {
                 string tilename = Path.GetFileNameWithoutExtension(x);
@@ -61,7 +61,7 @@ namespace EmeraldDream
             ObjectsAssembly fa = new ObjectsAssembly(tb);
 
             // Grab floor types
-            string[] floors = Directory.GetFiles(Path.Combine(scriptpath, "res/floors"), "*.floor");
+            string[] floors = Directory.GetFiles(Path.Combine(scriptpath, "floors"), "*.floor");
             floors.ToList().ForEach(x =>
             {
                 string floorname = Path.GetFileNameWithoutExtension(x);
@@ -69,7 +69,7 @@ namespace EmeraldDream
             });
 
             // Grab object types
-            string[] objects = Directory.GetFiles(Path.Combine(scriptpath, "res/objects"), "*.desc");
+            string[] objects = Directory.GetFiles(Path.Combine(scriptpath, "objects"), "*.desc");
             objects.ToList().ForEach(x =>
             {
                 string objname = Path.GetFileNameWithoutExtension(x);

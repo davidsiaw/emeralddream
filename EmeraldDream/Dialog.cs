@@ -22,15 +22,15 @@ namespace EmeraldDream
 
         static Dialog()
         {
-            tl = Bitmap.FromFile("res/res/window/tl.png");
-            tr = Bitmap.FromFile("res/res/window/tr.png");
-            bl = Bitmap.FromFile("res/res/window/bl.png");
-            br = Bitmap.FromFile("res/res/window/br.png");
-            l = Bitmap.FromFile("res/res/window/l.png");
-            r = Bitmap.FromFile("res/res/window/r.png");
-            t = Bitmap.FromFile("res/res/window/t.png");
-            b = Bitmap.FromFile("res/res/window/b.png");
-            c = Bitmap.FromFile("res/res/window/c.png");
+            tl = Bitmap.FromFile("res/window/tl.png");
+            tr = Bitmap.FromFile("res/window/tr.png");
+            bl = Bitmap.FromFile("res/window/bl.png");
+            br = Bitmap.FromFile("res/window/br.png");
+            l = Bitmap.FromFile("res/window/l.png");
+            r = Bitmap.FromFile("res/window/r.png");
+            t = Bitmap.FromFile("res/window/t.png");
+            b = Bitmap.FromFile("res/window/b.png");
+            c = Bitmap.FromFile("res/window/c.png");
         }
 
         int x = 0;
