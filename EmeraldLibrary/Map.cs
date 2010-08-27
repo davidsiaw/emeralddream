@@ -11,7 +11,7 @@ namespace EmeraldLibrary
 {
     public class Map
     {
-        GameControl game;
+        public GameControl GameControl;
         MapFloor[,] floorLevel;
         MapObject[,] characterLevel;
         MapObject[,] ceilingLevel;
@@ -65,7 +65,7 @@ namespace EmeraldLibrary
 
                     camx = value;
 
-                    x = camx - (game.Width / 2 / 32);
+                    x = camx - (GameControl.Width / 2 / 32);
 
                     if (Submovementdirection == Direction.Right)
                     {
@@ -78,17 +78,17 @@ namespace EmeraldLibrary
                         x = 0;
                         Submovementdirection = null;
                     }
-                    else if (x + game.Width / 32 >= w)
+                    else if (x + GameControl.Width / 32 >= w)
                     {
-                        if (x + game.Width / 32 == w && Submovementdirection == Direction.Left)
+                        if (x + GameControl.Width / 32 == w && Submovementdirection == Direction.Left)
                         {
                             Submovementdirection = null;
                         }
-                        if (x + game.Width / 32 > w)
+                        if (x + GameControl.Width / 32 > w)
                         {
                             Submovementdirection = null;
                         }
-                        x = w - game.Width / 32;
+                        x = w - GameControl.Width / 32;
                     }
                 }
             }
@@ -121,7 +121,7 @@ namespace EmeraldLibrary
 
                     camy = value;
 
-                    y = camy - (game.Height / 2 / 32);
+                    y = camy - (GameControl.Height / 2 / 32);
 
                     if (Submovementdirection == Direction.Down)
                     {
@@ -133,26 +133,27 @@ namespace EmeraldLibrary
                         y = 0;
                         Submovementdirection = null;
                     }
-                    else if (y + game.Height / 32 >= h)
+                    else if (y + GameControl.Height / 32 >= h)
                     {
-                        if (y + game.Height / 32 == h && Submovementdirection == Direction.Up)
+                        if (y + GameControl.Height / 32 == h && Submovementdirection == Direction.Up)
                         {
                             Submovementdirection = null;
                         }
-                        if (y + game.Height / 32 > h)
+                        if (y + GameControl.Height / 32 > h)
                         {
                             Submovementdirection = null;
                         }
-                        y = h - game.Height / 32;
+                        y = h - GameControl.Height / 32;
                     }
                 }
             }
         }
 
+    
 
         public Map(GameControl game, int w, int h)
         {
-            this.game = game;
+            this.GameControl = game;
             floorLevel = new MapFloor[w, h];
             characterLevel = new MapObject[w, h];
             ceilingLevel = new MapObject[w, h];
@@ -310,7 +311,7 @@ namespace EmeraldLibrary
 
         public void MoveCamera(Direction dir)
         {
-            Debug.WriteLine(" submovementdirection=" + Submovementdirection);
+            //Debug.WriteLine(" submovementdirection=" + Submovementdirection);
             if (Submovementdirection == null)
             {
                 Submovementdirection = dir;
@@ -342,88 +343,78 @@ namespace EmeraldLibrary
                         if (Submovementdirection != null)
                         {
                             subx -= GameWindow.TileSize;
-                            Debug.WriteLine(" subx=" + subx);
+                            //Debug.WriteLine(" subx=" + subx);
                         }
                         break;
                 }
             }
         }
 
+        public void ScreenToMapCoords(int x, int y, out int mapx, out int mapy)
+        {
+            int viewportx;
+            int viewporty;
+            int xLeftMost;
+            int yTopMost;
+            int xRightMost;
+            int yBottomMost;
+            AnalyseMap(out viewportx, out viewporty, out xLeftMost, out yTopMost, out xRightMost, out yBottomMost);
+
+            // Adjust the coordinates we are looking at based on the viewport coords
+            x = x - viewportx;
+            y = y - viewporty;
+            if (x < 0 || x > Width * GameWindow.TileSize || y < 0 || y > Height * GameWindow.TileSize)
+            {
+                mapx = -1;
+                mapy = -1;
+                return;
+            }
+
+            mapx = x / GameWindow.TileSize + xLeftMost;
+            mapy = y / GameWindow.TileSize + yTopMost;
+        }
+
         int subx = 0;
+
+        public void MapToScreenCoords(int mapx, int mapy, out int x, out int y)
+        {
+            int viewportx;
+            int viewporty;
+            int xLeftMost;
+            int yTopMost;
+            int xRightMost;
+            int yBottomMost;
+            AnalyseMap(out viewportx, out viewporty, out xLeftMost, out yTopMost, out xRightMost, out yBottomMost);
+
+            mapx -= xLeftMost;
+            mapy -= yTopMost;
+
+            x = mapx * GameWindow.TileSize + viewportx;
+            y = mapy * GameWindow.TileSize + viewporty;
+        }
+
         int suby = 0;
 
         const int moveamount = 8;
         public void DrawMap(Graphics g)
         {
-
-            int viewportx = 0;
-            int viewporty = 0;
-
-            int xLeftMost = 0;
-            int yTopMost = 0; 
-
-            int xRightMost = w;
-            int yBottomMost = h;
-
-            // If the size of the map is equal or less than the screen size, we center it on the screen
-            if (w * GameWindow.TileSize <= game.Width)
-            {
-                viewportx = (game.Width / 2) - (w * GameWindow.TileSize / 2);
-                x = 0;
-            }
-            else
-            {
-                xLeftMost = x;
-                xRightMost = x + game.Width / 32 + 1;
-            }
-
-            if (h * GameWindow.TileSize <= game.Height)
-            {
-                viewporty = (game.Height / 2) - (h * GameWindow.TileSize / 2);
-                y = 0;
-            }
-            else
-            {
-                yTopMost = y;
-                yBottomMost = y + game.Height / 32 + 2;
-            }
-
-            if (Submovementdirection != null)
-            {
-                switch (Submovementdirection)
-                {
-                    case Direction.Up:
-                        suby -= moveamount;
-                        break;
-                    case Direction.Down:
-                        suby += moveamount;
-                        break;
-                    case Direction.Left:
-                        subx -= moveamount;
-                        break;
-                    case Direction.Right:
-                        subx += moveamount;
-                        break;
-                }
-                if (subx == 0 && suby == 0)
-                {
-                    Submovementdirection = null;
-                }
-            }
-
-            // subtile scrolling
-            viewportx -= subx;
-            viewporty -= suby;
+            int viewportx;
+            int viewporty;
+            int xLeftMost;
+            int yTopMost;
+            int xRightMost;
+            int yBottomMost;
+            AnalyseMap(out viewportx, out viewporty, out xLeftMost, out yTopMost, out xRightMost, out yBottomMost);
 
             if (xLeftMost > 0)
             {
                 xLeftMost -= 1;
-                viewportx -= 32;
+                viewportx -= GameWindow.TileSize;
             }
             if (yTopMost > 0)
             {
                 yTopMost -= 1;
-                viewporty -= 32;
+                viewporty -= GameWindow.TileSize;
             }
             
             // Draw the tiles!
@@ -436,7 +427,7 @@ namespace EmeraldLibrary
                 {
                     if (floorLevel[xx, yy] != null)
                     {
-                        game.tiles.DrawTile(g, floorLevel[xx, yy].TileIndex, xcount * GameWindow.TileSize + viewportx, ycount * GameWindow.TileSize + viewporty);
+                        GameControl.tiles.DrawTile(g, floorLevel[xx, yy].TileIndex, xcount * GameWindow.TileSize + viewportx, ycount * GameWindow.TileSize + viewporty);
                     }
                     ycount++;
                 }
@@ -469,7 +460,7 @@ namespace EmeraldLibrary
                                     objectToSubx[obj] += moveamount;
                                     break;
                             }
-                            game.tiles.DrawTile(g, obj.TileIndex, xcount * GameWindow.TileSize + viewportx + objectToSubx[obj], ycount * GameWindow.TileSize + viewporty + objectToSuby[obj]);
+                            GameControl.tiles.DrawTile(g, obj.TileIndex, xcount * GameWindow.TileSize + viewportx + objectToSubx[obj], ycount * GameWindow.TileSize + viewporty + objectToSuby[obj]);
 
                             if (Math.Abs(objectToSuby[obj]) >= GameWindow.TileSize || Math.Abs(objectToSubx[obj]) >= GameWindow.TileSize)
                             {
@@ -482,7 +473,7 @@ namespace EmeraldLibrary
                         }
                         else
                         {
-                            game.tiles.DrawTile(g, obj.TileIndex, xcount * GameWindow.TileSize + viewportx, ycount * GameWindow.TileSize + viewporty);
+                            GameControl.tiles.DrawTile(g, obj.TileIndex, xcount * GameWindow.TileSize + viewportx, ycount * GameWindow.TileSize + viewporty);
                         }
                     }
                     ycount++;
@@ -498,12 +489,75 @@ namespace EmeraldLibrary
                 {
                     if (ceilingLevel[xx, yy] != null)
                     {
-                        game.tiles.DrawTile(g, ceilingLevel[xx, yy].TileIndex, xcount * GameWindow.TileSize + viewportx, ycount * GameWindow.TileSize + viewporty);
+                        GameControl.tiles.DrawTile(g, ceilingLevel[xx, yy].TileIndex, xcount * GameWindow.TileSize + viewportx, ycount * GameWindow.TileSize + viewporty);
                     }
                     ycount++;
                 }
                 xcount++;
             }
+        }
+
+        private void AnalyseMap(out int viewportx, out int viewporty, out int xLeftMost, out int yTopMost, out int xRightMost, out int yBottomMost)
+        {
+
+            viewportx = 0;
+            viewporty = 0;
+
+            xLeftMost = 0;
+            yTopMost = 0;
+
+            xRightMost = w;
+            yBottomMost = h;
+
+            // If the size of the map is equal or less than the screen size, we center it on the screen
+            if (w * GameWindow.TileSize <= GameControl.Width)
+            {
+                viewportx = (GameControl.Width / 2) - (w * GameWindow.TileSize / 2);
+                x = 0;
+            }
+            else
+            {
+                xLeftMost = x;
+                xRightMost = x + GameControl.Width / 32 + 1;
+            }
+
+            if (h * GameWindow.TileSize <= GameControl.Height)
+            {
+                viewporty = (GameControl.Height / 2) - (h * GameWindow.TileSize / 2);
+                y = 0;
+            }
+            else
+            {
+                yTopMost = y;
+                yBottomMost = y + GameControl.Height / 32 + 2;
+            }
+
+            if (Submovementdirection != null)
+            {
+                switch (Submovementdirection)
+                {
+                    case Direction.Up:
+                        suby -= moveamount;
+                        break;
+                    case Direction.Down:
+                        suby += moveamount;
+                        break;
+                    case Direction.Left:
+                        subx -= moveamount;
+                        break;
+                    case Direction.Right:
+                        subx += moveamount;
+                        break;
+                }
+                if (subx == 0 && suby == 0)
+                {
+                    Submovementdirection = null;
+                }
+            }
+
+            // subtile scrolling
+            viewportx -= subx;
+            viewporty -= suby;
         }
     }
 }

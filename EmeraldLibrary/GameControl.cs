@@ -12,7 +12,7 @@ namespace EmeraldLibrary
 {
     public partial class GameControl : PictureBox
     {
-        public static int TileSize = 32;
+        public static int TileSize = 128;
         //public int ScreenWidth = 800;
         //public int ScreenHeight = 600;
 
@@ -56,11 +56,23 @@ namespace EmeraldLibrary
 
         }
 
+        public GameControl(TileBank tb) : this()
+        {
+            this.tiles = tb;
+        }
+
         void GameControl_Resize(object sender, EventArgs e)
         {
             Image = new Bitmap(Width, Height);
         }
 
+        public TileBank TileBank
+        {
+            set
+            {
+                tiles = value;
+            }
+        }
 
         internal TileBank tiles = new TileBank();
         Scene m_scene = null;

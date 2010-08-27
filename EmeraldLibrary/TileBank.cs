@@ -6,14 +6,13 @@ using System.Drawing;
 
 namespace EmeraldLibrary
 {
-    class TileBank
+    public class TileBank
     {
         List<Image> tiles = new List<Image>();
         Dictionary<string, int> tileNameToIndexMap = new Dictionary<string, int>();
 
         public int LoadTile(string name, Image image)
         {
-
             tiles.Add(image);
             int index = tiles.Count - 1;
             tileNameToIndexMap.Add(name, index);

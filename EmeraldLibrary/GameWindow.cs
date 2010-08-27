@@ -58,27 +58,6 @@ namespace EmeraldLibrary
             canvas.Draw(tilenum, x, y);
         }
 
-        public int LoadTile(string name, string filename)
-        {
-            return canvas.LoadTile(name, filename);
-        }
-
-        public int LoadTile(string name, Image img)
-        {
-            return canvas.LoadTile(name, img);
-        }
-
-        public string GetTileName(int tile)
-        {
-            return canvas.GetTileName(tile);
-        }
-
-        public int GetTileByName(string name)
-        {
-            return canvas.GetTileByName(name);
-        }
-
-
         private void GameWindow_KeyDown(object sender, KeyEventArgs e)
         {
             if (canvas.Scene != null)
@@ -96,7 +75,7 @@ namespace EmeraldLibrary
             }
         }
 
-        internal TileBank Tiles {
+        public TileBank Tiles {
             get
             {
                 return canvas.tiles;
