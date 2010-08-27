@@ -30,12 +30,26 @@ namespace MapMaker
             }
         }
 
-        public MapList(MapEditorState mes)
+        public MapList(MapEditorState mes, ToolStripMenuItem mnuitem)
         {
             InitializeComponent();
-            mes.maps.ForEach(x => { 
+            mes.maps.Keys.ToList().ForEach(x => { 
                 listBox1.Items.Add(new MapInfo(x)); 
             });
+
+            mes.RegisterWindow("MapList", this, mnuitem);
+            this.FormClosing += new FormClosingEventHandler((o, e) => { mes.DeregisterWindow("MapList"); });
+            this.mes = mes;
+        }
+
+        MapEditorState mes;
+
+        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listBox1.SelectedItem != null)
+            {
+                mes.OpenMapEditor((listBox1.SelectedItem as MapInfo).ToString());
+            }
         }
 
 

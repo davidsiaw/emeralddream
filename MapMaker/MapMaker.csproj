@@ -89,6 +89,12 @@
     <Compile Include="Editor.Designer.cs">
       <DependentUpon>Editor.cs</DependentUpon>
     </Compile>
+    <Compile Include="Floors.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Floors.Designer.cs">
+      <DependentUpon>Floors.cs</DependentUpon>
+    </Compile>
     <Compile Include="MapEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -123,6 +129,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Editor.resx">
       <DependentUpon>Editor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Floors.resx">
+      <DependentUpon>Floors.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MapEditor.resx">
       <DependentUpon>MapEditor.cs</DependentUpon>

@@ -33,18 +33,22 @@ namespace MapMaker
             toolStripContainer1.ContentPanel.Controls.Add(this.dm);
 
             mes.dm = dm;
+            mes.coordlabel = status_Coords;
 
             mes.Init();
+            
         }
 
-        private void toolStripButton1_Click(object sender, EventArgs e)
+        private void mapListToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            MapList f = new MapList(mes);
-            dm.DockWindow(f, DockStyle.Right);
-            f.Show();
+            mes.ToggleWindow("MapList", mapListToolStripMenuItem1);
         }
 
-
-        
+        private void floorsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            mes.ToggleWindow("Floors", floorsToolStripMenuItem);
+        }
     }
+
+
 }
