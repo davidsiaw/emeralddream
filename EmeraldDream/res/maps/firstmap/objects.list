@@ -1,4 +1,4 @@
-[box0]
+﻿[box0]
 type:box
 location:10,10
 use:
@@ -18,4 +18,4 @@ say You have made your choice! Congratulations
 type:box
 location:12,12
 use:
-say I have no interest in ordinary humans. If you are an alien, esper or time traveller, come to me!
+say 何せよ I have no interest in ordinary humans. If you are an alien, esper or time traveller, come to me!

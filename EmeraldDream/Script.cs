@@ -37,6 +37,7 @@ namespace EmeraldDream
             ObjectName,
             MapName,
             ProcName,
+            ProcLabel,
             ImageName,
             Choicename,
         }
@@ -272,6 +273,12 @@ namespace EmeraldDream
                 currentInstruction.operand.Add(line.Substring(4));
                 currentInstruction.operandtype.Add(OperandType.Choicename);
             }
+            else if (line.StartsWith("goto"))
+            {
+                currentInstruction.type = InstructionType.Jump;
+                currentInstruction.operand.Add(line.Substring(5));
+                currentInstruction.operandtype.Add(OperandType.ProcLabel);
+            }
             else if (proclabelmatch.Success)
             {
                 currentInstruction.type = InstructionType.ProcedureLabel;
@@ -461,7 +468,14 @@ namespace EmeraldDream
                         sb.Append("story.menudialog.Open();\n");
                         break;
                     case InstructionType.Jump:
-                        sb.Append(i.operand[0] + "(story);\n");
+                        string instname = i.operand[0];
+
+                        if (i.operandtype[0] == OperandType.ProcLabel)
+                        {
+                            instname = procnameToInstruction[i.operand[0]];
+                        }
+
+                        sb.Append(instname + "(story);\n");
                         break;
                 }
 

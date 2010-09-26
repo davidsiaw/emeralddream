@@ -1,0 +1,4 @@
+up:fighter?0,144,32,48
+down:fighter?0,0,32,48
+left:fighter?0,48,32,48
+right:fighter?0,96,32,48

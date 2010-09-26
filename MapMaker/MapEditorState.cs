@@ -118,7 +118,7 @@ namespace MapMaker
             fa = new ObjectsAssembly(tilebank);
 
             // Grab tiles
-            string[] files = Directory.GetFiles(Path.Combine(resDir, "res/tiles"), "*.png");
+            string[] files = Directory.GetFiles(Path.Combine(resDir, "tiles"), "*.png");
             files.ToList().ForEach(x =>
             {
                 string tilename = Path.GetFileNameWithoutExtension(x);
@@ -126,7 +126,7 @@ namespace MapMaker
             });
 
             // Grab floor types
-            string[] floors = Directory.GetFiles(Path.Combine(resDir, "res/floors"), "*.floor");
+            string[] floors = Directory.GetFiles(Path.Combine(resDir, "floors"), "*.floor");
             floors.ToList().ForEach(x =>
             {
                 string floorname = Path.GetFileNameWithoutExtension(x);
@@ -134,7 +134,7 @@ namespace MapMaker
             });
 
             // Grab object types
-            string[] objects = Directory.GetFiles(Path.Combine(resDir, "res/objects"), "*.desc");
+            string[] objects = Directory.GetFiles(Path.Combine(resDir, "objects"), "*.desc");
             objects.ToList().ForEach(x =>
             {
                 string objname = Path.GetFileNameWithoutExtension(x);

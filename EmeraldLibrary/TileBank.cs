@@ -32,7 +32,11 @@ namespace EmeraldLibrary
 
         public void DrawTile(Graphics g, int tilenum, int x, int y)
         {
-            g.DrawImage(tiles[tilenum], new Rectangle(x, y, GameWindow.TileSize, GameWindow.TileSize));
+            Image tile = tiles[tilenum];
+            int tilex = x - (tile.Width - GameWindow.TileSize) / 2;
+            int tiley = y - tile.Height + GameWindow.TileSize;
+
+            g.DrawImage(tiles[tilenum], new Rectangle(tilex, tiley, tile.Width, tile.Height));
         }
 
         public string Tilename(int x)
@@ -44,5 +48,39 @@ namespace EmeraldLibrary
         {
             return tileNameToIndexMap[name];
         }
+
+        string GetTilePartName(string name, Rectangle rect)
+        {
+            return string.Join("?", new string[] { 
+                name, 
+                rect.X.ToString(),
+                rect.Y.ToString(),
+                rect.Width.ToString(),
+                rect.Height.ToString(),
+            
+            });
+        }
+
+        public int GetTileByName(string name, Rectangle rect)
+        {
+            string tilename = GetTilePartName(name, rect);
+            if (!tileNameToIndexMap.ContainsKey(tilename))
+            {
+                Image orig = tiles[tileNameToIndexMap[name]];
+
+                // Cut out the portion we want and save it
+                Bitmap b = new Bitmap(orig, rect.Size);
+                using (Graphics g = Graphics.FromImage(b))
+                {
+                    g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+                    g.DrawImage(orig, new Rectangle(Point.Empty, rect.Size), rect, GraphicsUnit.Pixel);
+                }
+                tiles.Add(b);
+                tileNameToIndexMap[tilename] = tiles.Count - 1;
+            }
+            return tileNameToIndexMap[tilename];
+        }
+
+
     }
 }

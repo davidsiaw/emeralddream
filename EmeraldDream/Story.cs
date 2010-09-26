@@ -23,15 +23,11 @@ namespace EmeraldDream
 
         Dictionary<string, Type> floortypes = new Dictionary<string, Type>();
         Dictionary<string, Type> objecttypes = new Dictionary<string, Type>();
-
         Dictionary<string, Map> maps = new Dictionary<string, Map>();
-
         Dictionary<string, MapObject> objects = new Dictionary<string, MapObject>();
-
         Dictionary<string, Image> images = new Dictionary<string, Image>();
 
         TileBank tb = null;
-
 
         string scriptpath;
         public Story(GameWindow g, string scriptpath)
@@ -199,7 +195,15 @@ namespace EmeraldDream
 
         public void SetImage(string image)
         {
-            staticImage.Image = image;
+            if (image == "nothing")
+            {
+                staticImage.Image = null;
+            }
+            else
+            {
+                staticImage.Image = image;
+            } 
+
         }
 
         public void ChangeMap(string mapName)
@@ -392,6 +396,29 @@ namespace EmeraldDream
             int leftindex = 0;
             int rightindex = 0;
 
+            Regex requestPartOfTile = new Regex(@"(?<name>[a-z][0-9a-z]*)\?(?<x>[0-9]+),(?<y>[0-9]+),(?<w>[0-9]+),(?<h>[0-9]+)");
+
+            Func<string, int> HandleTileName = x =>
+            {
+                int tileindex;
+                Match m = requestPartOfTile.Match(x);
+                if (m.Success)
+                {
+                    tileindex = this.gw.GetTileByName(
+                        m.Groups["name"].ToString(),
+                        new Rectangle(
+                            int.Parse(m.Groups["x"].ToString()),
+                            int.Parse(m.Groups["y"].ToString()),
+                            int.Parse(m.Groups["w"].ToString()),
+                            int.Parse(m.Groups["h"].ToString())));
+                }
+                else
+                {
+                    tileindex = this.gw.GetTileByName(x);
+                }
+                return tileindex;
+            };
+
             using (StreamReader sr = new StreamReader(filename))
             {
                 while (!sr.EndOfStream)
@@ -400,22 +427,22 @@ namespace EmeraldDream
                     if (line.StartsWith("up"))
                     {
                         string tilename = line.Split(':')[1];
-                        upindex = this.gw.GetTileByName(tilename);
+                        upindex = HandleTileName(tilename);
                     }
                     else if (line.StartsWith("down"))
                     {
                         string tilename = line.Split(':')[1];
-                        downindex = this.gw.GetTileByName(tilename);
+                        downindex = HandleTileName(tilename);
                     }
                     else if (line.StartsWith("left"))
                     {
                         string tilename = line.Split(':')[1];
-                        leftindex = this.gw.GetTileByName(tilename);
+                        leftindex = HandleTileName(tilename);
                     }
                     else if (line.StartsWith("right"))
                     {
                         string tilename = line.Split(':')[1];
-                        rightindex = this.gw.GetTileByName(tilename);
+                        rightindex = HandleTileName(tilename);
                     }
                 }
             }
@@ -476,10 +503,4 @@ namespace EmeraldDream
             return objectNameToTypeMap;
         }
     }
-
-   
-
-
-
-
 }

@@ -94,6 +94,9 @@
     <None Include="res\objects\box.desc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="res\objects\fighter.desc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="res\objects\orb.desc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
