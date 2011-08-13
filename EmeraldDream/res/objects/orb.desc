@@ -1,3 +1,10 @@
+-stand
+up:orbup
+down:orbdown
+left:orbleft
+right:orbright
+
+-walk
 up:orbup
 down:orbdown
 left:orbleft

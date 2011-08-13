@@ -460,6 +460,8 @@ namespace EmeraldLibrary
                                     objectToSubx[obj] += moveamount;
                                     break;
                             }
+                            obj.SetMode("walk");
+                            obj.SetFrameNumber(GameControl.Frame);
                             GameControl.tiles.DrawTile(g, obj.TileIndex, xcount * GameWindow.TileSize + viewportx + objectToSubx[obj], ycount * GameWindow.TileSize + viewporty + objectToSuby[obj]);
 
                             if (Math.Abs(objectToSuby[obj]) >= GameWindow.TileSize || Math.Abs(objectToSubx[obj]) >= GameWindow.TileSize)
@@ -473,6 +475,8 @@ namespace EmeraldLibrary
                         }
                         else
                         {
+                            obj.SetMode("stand");
+                            obj.SetFrameNumber(GameControl.Frame);
                             GameControl.tiles.DrawTile(g, obj.TileIndex, xcount * GameWindow.TileSize + viewportx, ycount * GameWindow.TileSize + viewporty);
                         }
                     }

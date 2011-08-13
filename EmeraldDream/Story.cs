@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Threading;
 
 namespace EmeraldDream
 {
@@ -178,6 +179,45 @@ namespace EmeraldDream
                     }
                 }
 
+                //var ob = (ICharacter)Activator.CreateInstance(objecttypes["box"]);
+                //m.SetCharacter(ob, 10, 5);
+
+                //Thread t = new Thread(x =>
+                //{
+                //    int xx = 10;
+                //    int yy = 5;
+                //    bool right = true;
+                //    while (true)
+                //    {
+                //        Thread.Sleep(1000);
+
+                //        if (right)
+                //        {
+                //            if (m.MoveCharacter(xx, yy, Direction.Right))
+                //            {
+                //                xx++;
+                //            }
+                //            else
+                //            {
+                //                right = false;
+                //            }
+                //        }
+                //        else
+                //        {
+                //            if (m.MoveCharacter(xx, yy, Direction.Left))
+                //            {
+                //                xx--;
+                //            }
+                //            else
+                //            {
+                //                right = true;
+                //            }
+                //        }
+                //    }
+                //});
+                //t.IsBackground = true;
+                //t.Start();
+
             }
 
             return m;
@@ -191,6 +231,7 @@ namespace EmeraldDream
             // First we read the main script
             Script main = new Script("MainScript", "res/main.script");
             main.Execute(this);
+
         }
 
         public void SetImage(string image)
@@ -261,15 +302,19 @@ namespace EmeraldDream
             {
                 switch (e.KeyCode)
                 {
+                    case Keys.W:
                     case Keys.Up:
                         currentscene.Move(Direction.Up);
                         break;
+                    case Keys.S:
                     case Keys.Down:
                         currentscene.Move(Direction.Down);
                         break;
+                    case Keys.A:
                     case Keys.Left:
                         currentscene.Move(Direction.Left);
                         break;
+                    case Keys.D:
                     case Keys.Right:
                         currentscene.Move(Direction.Right);
                         break;
@@ -310,7 +355,10 @@ namespace EmeraldDream
             {
                 if (mo is ICharacter)
                 {
-                    (mo as ICharacter).Use(this);
+                    if ((mo as ICharacter).Use != null)
+                    {
+                        (mo as ICharacter).Use(this);
+                    }
                 }
             }
         }
@@ -337,6 +385,7 @@ namespace EmeraldDream
             sb.Append("using EmeraldDream;\n");
             sb.Append("using EmeraldLibrary;\n");
             sb.Append("using System.Windows.Forms;\n");
+            sb.Append("using System.Collections.Generic;\n");
 
             sb.Append("namespace EmeraldDream\n");
             sb.Append("{\n");
@@ -374,6 +423,16 @@ namespace EmeraldDream
             sb.Append("    public class " + "floor_" + floorname + " : MapFloor \n");
             sb.Append("    {\n");
 
+            sb.Append("        string mode = \"stand\";\n");
+            sb.Append("        int frame;\n");
+
+            sb.Append("        Dictionary<string, int[,]> tileSets = new Dictionary<string, int[,]>();\n");
+
+            sb.Append("        public void SetMode(string mode) { this.mode = mode; } \n");
+            sb.Append("        public void SetFrameNumber(int num) { this.frame = num; } \n");
+
+            // TODO use tileSets and add animation!
+
             sb.Append("        public bool Passable\n");
             sb.Append("        {\n");
             sb.Append("            get { return " + passable.ToString().ToLower() + "; }\n");
@@ -396,53 +455,113 @@ namespace EmeraldDream
             int leftindex = 0;
             int rightindex = 0;
 
-            Regex requestPartOfTile = new Regex(@"(?<name>[a-z][0-9a-z]*)\?(?<x>[0-9]+),(?<y>[0-9]+),(?<w>[0-9]+),(?<h>[0-9]+)");
 
-            Func<string, int> HandleTileName = x =>
+
+            Func<string, int[]> HandleTileName = x =>
             {
-                int tileindex;
-                Match m = requestPartOfTile.Match(x);
-                if (m.Success)
+
+                string name = x.Split('?')[0];
+
+                int[] result = new int[4];
+
+                int tileindex = this.gw.GetTileByName(name);
+                result[0] = tileindex;
+                result[1] = tileindex;
+                result[2] = tileindex;
+                result[3] = tileindex;
+                
+                if (x.Split('?').Length == 2)
                 {
-                    tileindex = this.gw.GetTileByName(
-                        m.Groups["name"].ToString(),
-                        new Rectangle(
-                            int.Parse(m.Groups["x"].ToString()),
-                            int.Parse(m.Groups["y"].ToString()),
-                            int.Parse(m.Groups["w"].ToString()),
-                            int.Parse(m.Groups["h"].ToString())));
+                    string coords = x.Split('?')[1];
+                    string[] coordset = coords.Split('&');
+                    if (coordset.Length == 4)
+                    {
+                        for (int i = 0; i < 4; i++)
+                        {
+                            string[] coordindivs = coordset[i].Split(',');
+                            tileindex = this.gw.GetTileByName(
+                                name,
+                                new Rectangle(
+                                int.Parse(coordindivs[0]),
+                                int.Parse(coordindivs[1]),
+                                int.Parse(coordindivs[2]),
+                                int.Parse(coordindivs[3])));
+
+                            result[i] = tileindex;
+                        }
+
+                    }
+                    else
+                    {
+                        string[] coordindivs = coordset[0].Split(',');
+                        tileindex = this.gw.GetTileByName(
+                            name,
+                            new Rectangle(
+                            int.Parse(coordindivs[0]),
+                            int.Parse(coordindivs[1]),
+                            int.Parse(coordindivs[2]),
+                            int.Parse(coordindivs[3])));
+
+                        result[0] = tileindex;
+                        result[1] = tileindex;
+                        result[2] = tileindex;
+                        result[3] = tileindex;
+                    }
                 }
-                else
-                {
-                    tileindex = this.gw.GetTileByName(x);
-                }
-                return tileindex;
+
+                return result;
             };
+
+            Dictionary<string, int[,]> tileSets = new Dictionary<string, int[,]>();
+
+            string mode = "stand";
 
             using (StreamReader sr = new StreamReader(filename))
             {
                 while (!sr.EndOfStream)
                 {
                     string line = sr.ReadLine();
-                    if (line.StartsWith("up"))
+
+                    if (line.StartsWith("-"))
+                    {
+                        mode = line.Substring(1);
+                        tileSets[mode] = new int[4, 4];
+                    }
+                    else if (line.StartsWith("up"))
                     {
                         string tilename = line.Split(':')[1];
-                        upindex = HandleTileName(tilename);
+                        int[] tiles = HandleTileName(tilename);
+                        tileSets[mode][(int)Direction.Up, 0] = tiles[0];
+                        tileSets[mode][(int)Direction.Up, 1] = tiles[1];
+                        tileSets[mode][(int)Direction.Up, 2] = tiles[2];
+                        tileSets[mode][(int)Direction.Up, 3] = tiles[3];
                     }
                     else if (line.StartsWith("down"))
                     {
                         string tilename = line.Split(':')[1];
-                        downindex = HandleTileName(tilename);
+                        int[] tiles = HandleTileName(tilename);
+                        tileSets[mode][(int)Direction.Down, 0] = tiles[0];
+                        tileSets[mode][(int)Direction.Down, 1] = tiles[1];
+                        tileSets[mode][(int)Direction.Down, 2] = tiles[2];
+                        tileSets[mode][(int)Direction.Down, 3] = tiles[3];
                     }
                     else if (line.StartsWith("left"))
                     {
                         string tilename = line.Split(':')[1];
-                        leftindex = HandleTileName(tilename);
+                        int[] tiles = HandleTileName(tilename);
+                        tileSets[mode][(int)Direction.Left, 0] = tiles[0];
+                        tileSets[mode][(int)Direction.Left, 1] = tiles[1];
+                        tileSets[mode][(int)Direction.Left, 2] = tiles[2];
+                        tileSets[mode][(int)Direction.Left, 3] = tiles[3];
                     }
                     else if (line.StartsWith("right"))
                     {
                         string tilename = line.Split(':')[1];
-                        rightindex = HandleTileName(tilename);
+                        int[] tiles = HandleTileName(tilename);
+                        tileSets[mode][(int)Direction.Right, 0] = tiles[0];
+                        tileSets[mode][(int)Direction.Right, 1] = tiles[1];
+                        tileSets[mode][(int)Direction.Right, 2] = tiles[2];
+                        tileSets[mode][(int)Direction.Right, 3] = tiles[3];
                     }
                 }
             }
@@ -450,9 +569,32 @@ namespace EmeraldDream
             sb.Append("    public class " + "object_" + objectname + " : MapObject, ICharacter \n");
             sb.Append("    {\n");
 
-            sb.Append("        Action<Story> onUse = null;");
+            sb.Append("        Action<Story> onUse = null;\n");
 
-            sb.Append("        int[] tiles = new int[4] { " + upindex + ", " + downindex + ", " + leftindex + ", " + rightindex + " };\n");
+            sb.Append("        string mode = \"stand\";\n");
+            sb.Append("        int frame;\n");
+
+            sb.Append("        Dictionary<string, int[,]> tileSets = new Dictionary<string, int[,]>();\n");
+
+            sb.Append("        public void SetMode(string mode) { this.mode = mode; } \n");
+            sb.Append("        public void SetFrameNumber(int num) { this.frame = num; } \n");
+
+            sb.Append("        public object_" + objectname + "() { \n");
+
+            foreach (var kvpair in tileSets)
+            {
+                sb.Append("            tileSets[\"" + kvpair.Key + "\"] = new int[4,4];\n");
+                for (int x = 0; x < 4; x++)
+                {
+                    for (int y = 0; y < 4; y++)
+                    {
+                        sb.Append("            tileSets[\"" + kvpair.Key + "\"][" + x + "," + y + "] = " + kvpair.Value[x, y] + ";\n");
+                    }
+                }
+            }
+
+            sb.Append("        }\n");
+
             sb.Append("        Direction dir = Direction.Up;\n");
 
             sb.Append("        public Direction Direction\n");
@@ -463,7 +605,7 @@ namespace EmeraldDream
 
             sb.Append("        public int TileIndex\n");
             sb.Append("        {\n");
-            sb.Append("            get { return tiles[(int)dir]; }\n");
+            sb.Append("            get { return tileSets[mode][(int)dir,frame]; }\n");
             sb.Append("        }\n");
 
             sb.Append("        public Action<Story> Use\n");

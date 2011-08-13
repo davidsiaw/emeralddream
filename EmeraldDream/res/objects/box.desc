@@ -1,3 +1,10 @@
+-stand
+up:box
+down:box
+left:box
+right:box
+
+-walk
 up:box
 down:box
 left:box

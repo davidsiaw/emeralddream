@@ -8,6 +8,8 @@ namespace EmeraldLibrary
 
     public interface MapObject
     {
+        void SetMode(string mode);
+        void SetFrameNumber(int num);
         int TileIndex { get; }
     }
 

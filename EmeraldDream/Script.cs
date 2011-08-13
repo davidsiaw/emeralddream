@@ -28,6 +28,7 @@ namespace EmeraldDream
             Menu,
             For,    // Start Choice subroutine
             End,    // End choice subroutine
+            Exitgame,
             Jump
         }
 
@@ -285,6 +286,10 @@ namespace EmeraldDream
                 currentInstruction.operand.Add(proclabelmatch.Groups["procname"].ToString());
                 currentInstruction.operandtype.Add(OperandType.ProcName);
             }
+            else if (line == "exitgame")
+            {
+                currentInstruction.type = InstructionType.Exitgame;
+            }
             else
             {
                 currentInstruction.type = InstructionType.Noop;
@@ -476,6 +481,9 @@ namespace EmeraldDream
                         }
 
                         sb.Append(instname + "(story);\n");
+                        break;
+                    case InstructionType.Exitgame:
+                        sb.Append("Application.Exit();\n");
                         break;
                 }
 

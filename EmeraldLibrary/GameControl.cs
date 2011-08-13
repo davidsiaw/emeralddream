@@ -48,6 +48,13 @@ namespace EmeraldLibrary
                 {
                     k |= Keys.Return;
                 }
+                for (char i = 'A'; i <= 'Z'; i++)
+                {
+                    if (state[(Key)Enum.Parse(typeof(Key), i.ToString())])
+                    {
+                        k |= (Keys)Enum.Parse(typeof(Keys), i.ToString());
+                    }
+                }
                 kea = new KeyEventArgs(k);
                 Game_DXKeyDown(this, kea);
             };
@@ -146,8 +153,19 @@ namespace EmeraldLibrary
             Draw(g => { g.FillRectangle(new SolidBrush(Color.Black), new Rectangle(0, 0, Width, Height)); });
         }
 
+        const int slowness=8;
+        int frame = 0;
+        public int Frame { get; private set; }
+
         public void Draw(Action<Graphics> drawfunc)
         {
+            frame++;
+            if (frame == slowness * 4)
+            {
+                frame = 0;
+            }
+            Frame = frame / slowness;
+
             if (Image != null)
             {
                 using (Graphics g = Graphics.FromImage(Image))

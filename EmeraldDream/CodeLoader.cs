@@ -39,6 +39,10 @@ namespace EmeraldDream
         {
             cp.MainClass = name;
             cp.OutputAssembly = name;
+#if DEBUG
+            cp.IncludeDebugInformation = true;
+            cp.TempFiles = new TempFileCollection(".", true);
+#endif
 
             CompilerResults cr = csc.CompileAssemblyFromSource(cp, code);
 

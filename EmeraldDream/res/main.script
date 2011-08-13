@@ -19,6 +19,7 @@ goto firstmap
 end
 for b
 goto loadgame
+end
 for c
 exitgame
 end
