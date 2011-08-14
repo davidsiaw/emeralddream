@@ -418,27 +418,27 @@ namespace EmeraldLibrary
             }
             
             // Draw the tiles!
-            
-            int xcount = 0;
-            for (int xx = xLeftMost; xx < xRightMost && xx < w; xx++)
+
+            int ycount = 0;
+            for (int yy = yTopMost; yy < yBottomMost && yy < h; yy++)
             {
-                int ycount = 0;
-                for (int yy = yTopMost; yy < yBottomMost && yy < h; yy++)
+                int xcount = 0;
+                for (int xx = xLeftMost; xx < xRightMost && xx < w; xx++)
                 {
                     if (floorLevel[xx, yy] != null)
                     {
                         GameControl.tiles.DrawTile(g, floorLevel[xx, yy].TileIndex, xcount * GameWindow.TileSize + viewportx, ycount * GameWindow.TileSize + viewporty);
                     }
-                    ycount++;
+                    xcount++;
                 }
-                xcount++;
+                ycount++;
             }
 
-            xcount = 0;
-            for (int xx = xLeftMost; xx < xRightMost && xx < w; xx++)
+            ycount = 0;
+            for (int yy = yTopMost; yy < yBottomMost && yy < h; yy++)
             {
-                int ycount = 0;
-                for (int yy = yTopMost; yy < yBottomMost && yy < h; yy++)
+                int xcount = 0;
+                for (int xx = xLeftMost; xx < xRightMost && xx < w; xx++)
                 {
                     if (characterLevel[xx, yy] != null)
                     {
@@ -480,24 +480,24 @@ namespace EmeraldLibrary
                             GameControl.tiles.DrawTile(g, obj.TileIndex, xcount * GameWindow.TileSize + viewportx, ycount * GameWindow.TileSize + viewporty);
                         }
                     }
-                    ycount++;
+                    xcount++;
                 }
-                xcount++;
+                ycount++;
             }
-        
-            xcount = 0;
-            for (int xx = xLeftMost; xx < xRightMost && xx < w; xx++)
+
+            ycount = 0;
+            for (int yy = yTopMost; yy < yBottomMost && yy < h; yy++)
             {
-                int ycount = 0;
-                for (int yy = yTopMost; yy < yBottomMost && yy < h; yy++)
+                int xcount = 0;
+                for (int xx = xLeftMost; xx < xRightMost && xx < w; xx++)
                 {
                     if (ceilingLevel[xx, yy] != null)
                     {
                         GameControl.tiles.DrawTile(g, ceilingLevel[xx, yy].TileIndex, xcount * GameWindow.TileSize + viewportx, ycount * GameWindow.TileSize + viewporty);
                     }
-                    ycount++;
+                    xcount++;
                 }
-                xcount++;
+                ycount++;
             }
         }
 

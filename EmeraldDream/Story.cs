@@ -38,7 +38,7 @@ namespace EmeraldDream
             this.scriptpath = scriptpath;
 
             // Grab images
-            string[] imagefiles = Directory.GetFiles(Path.Combine(scriptpath, "images"), "*.jpg");
+            string[] imagefiles = Directory.GetFiles(Path.Combine(scriptpath, "images"), "*.*g");
             imagefiles.ToList().ForEach(x =>
             {
                 string imagename = Path.GetFileName(x);

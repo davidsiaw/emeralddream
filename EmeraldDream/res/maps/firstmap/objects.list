@@ -19,3 +19,12 @@ type:box
 location:12,12
 use:
 say 何せよ I have no interest in ordinary humans. If you are an alien, esper or time traveller, come to me!
+
+[box2]
+type:box
+location:15,15
+use:
+set image hinagiku2.png
+say This is an image of hinagiku
+say Nice right?
+set image nothing
