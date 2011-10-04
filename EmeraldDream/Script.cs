@@ -512,7 +512,7 @@ namespace EmeraldDream
             return (n + 1) < instructions.Count && instructions[n + 1].type != InstructionType.ProcedureLabel && instructions[n + 1].type != InstructionType.MainProcedureLabel;
         }
 
-        public MethodInfo GetMethod(string method)
+        private MethodInfo GetMethod(string method)
         {
             Type t = asm.GetType("EmeraldDream." + name);
             MethodInfo mi = t.GetMethod(procnameToInstruction[method]);

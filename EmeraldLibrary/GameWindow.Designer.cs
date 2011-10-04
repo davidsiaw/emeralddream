@@ -51,11 +51,13 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 600);
             this.Controls.Add(this.canvas);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "GameWindow";
             this.Text = "Game";
-            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.GameWindow_KeyUp);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.GameWindow_KeyDown);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.GameWindow_KeyUp);
             ((System.ComponentModel.ISupportInitialize)(this.canvas)).EndInit();
             this.ResumeLayout(false);
 
