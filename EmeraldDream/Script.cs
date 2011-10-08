@@ -40,6 +40,7 @@ namespace EmeraldDream
             ProcName,
             ProcLabel,
             ImageName,
+            OverlayName,
             Choicename,
         }
 
@@ -221,6 +222,10 @@ namespace EmeraldDream
                 {
                     currentInstruction.operandtype.Add(OperandType.ImageName);
                 }
+                else if (tokens[1] == ("overlay"))
+                {
+                    currentInstruction.operandtype.Add(OperandType.OverlayName);
+                }
                 else
                 {
                     throw new ScriptException("I don't know what a {0} is", tokens[1]);
@@ -399,6 +404,9 @@ namespace EmeraldDream
                                 break;
                             case OperandType.ImageName:
                                 sb.Append("story.SetImage(\"" + i.operand[0] + "\");\n");
+                                break;
+                            case OperandType.OverlayName:
+                                sb.Append("story.SetOverlay(\"" + i.operand[0] + "\");\n");
                                 break;
                         }
                         if (ThereIsANextInstruction(instructions, n))

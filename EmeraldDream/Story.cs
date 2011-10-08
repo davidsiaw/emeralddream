@@ -246,6 +246,18 @@ namespace EmeraldDream
             {
                 staticImage.Image = image;
             } 
+        }
+
+        public void SetOverlay(string image)
+        {
+            if (image == "nothing")
+            {
+                staticOverlay.Image = null;
+            }
+            else
+            {
+                staticOverlay.Image = image;
+            }
 
         }
 

@@ -1,15 +1,31 @@
 ﻿firstmap:
-set image nothing
-set map firstmap
-make object fighter thehero
-set object thehero
-say If you want to interact with anything, just press [Enter] while facing it.
+set overlay stationentrance.jpg
+say Summertime...
+say I guess going back isn't such a bad thing, since I'll be able to get my head back together again
+say Though I have no idea what I'm gonna do when I get back to school.
+say I'll need to cool my head a little. All I've been thinking about is JP and I can't let it affect me
+say My parents were insisting I go back, so I guess that's all well and good.
+say Damn. I wish I was able to say goodbye.
+set overlay nothing
+say I'm in my 2nd year of highschool right now
+say That doesn't mean much to me besides the fact that the final exams will be next year.
+say Mom and dad want me to be an engineer, since I don't really know what I want to be either.
+say I wonder what they'll say about me piloting...
+say Nah. No way. At the rate National Geographic is going on about airplane disasters, there's no way they'll let me do that
+say I wonder what it'll be like to bring JP around travelling...
+set overlay intrain.jpg
+say more monologue...
+goto firstmap
+
 
 loadgame:
 // loadgame
+say not implemented yet =P
+end
 
 start:
-set image title800x600.jpg
+set image back.jpg
+set overlay title.jpg
 choicetitle
 choice a New Game
 choice b Load Game
@@ -23,4 +39,4 @@ end
 for c
 exitgame
 end
-say You have made your choice! Congratulations
+say meow

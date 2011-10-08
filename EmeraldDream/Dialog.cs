@@ -177,7 +177,7 @@ namespace EmeraldDream
             if (doOnceOnClose != null)
             {
                 doOnceOnClose();
-                doOnceOnClose = null;
+                //doOnceOnClose = null;
             }
         }
 
