@@ -97,8 +97,10 @@ namespace EmeraldDream
             narrationdialog = new NarrationDialog(30, 400, 740, 200);
             menudialog = new MenuDialog(30, 400, 740, 200);
             staticImage = new StaticImage(images);
+            staticOverlay = new StaticImage(images);
 
             currentscene.AddLayer(staticImage);
+            currentscene.AddLayer(staticOverlay);
             currentscene.AddLayer(narrationdialog);
             currentscene.AddLayer(menudialog);
 
@@ -371,6 +373,7 @@ namespace EmeraldDream
         public NarrationDialog narrationdialog;
         public MenuDialog menudialog;
         public StaticImage staticImage;
+        public StaticImage staticOverlay;
     }
 
     public class ObjectsAssembly
