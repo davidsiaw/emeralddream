@@ -7,6 +7,7 @@ say I'll need to cool my head a little. All I've been thinking about is JP and I
 say My parents were insisting I go back, so I guess that's all well and good.
 say Damn. I wish I was able to say goodbye.
 set overlay nothing
+set overlay platform.jpg
 say I'm in my 2nd year of highschool right now
 say That doesn't mean much to me besides the fact that the final exams will be next year.
 say Mom and dad want me to be an engineer, since I don't really know what I want to be either.

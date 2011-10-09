@@ -24,8 +24,18 @@ namespace EmeraldLibrary
             ClearAll();
             Image = new Bitmap(Width, Height);
 
+            
+
+            this.Resize += new EventHandler(GameControl_Resize);
+            this.LoadCompleted += new AsyncCompletedEventHandler(GameControl_LoadCompleted);
+
+        }
+
+        void GameControl_LoadCompleted(object sender, AsyncCompletedEventArgs e)
+        {
             kb = new DXKeyboard(Form.ActiveForm);
-            kb.keyDown = state => {
+            kb.keyDown = state =>
+            {
                 KeyEventArgs kea;
                 Keys k = Keys.None;
                 if (state[Key.Up])
@@ -58,9 +68,6 @@ namespace EmeraldLibrary
                 kea = new KeyEventArgs(k);
                 Game_DXKeyDown(this, kea);
             };
-
-            this.Resize += new EventHandler(GameControl_Resize);
-
         }
 
         public GameControl(TileBank tb) : this()
