@@ -1,9 +1,14 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmeraldDream", "EmeraldDream\EmeraldDream.csproj", "{7EA74254-B5DE-4C3F-AA2C-ED0771809F9F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmeraldLibrary", "EmeraldLibrary\EmeraldLibrary.csproj", "{EB664100-2D2E-4E7E-BD03-0E873C80AA87}"
+	ProjectSection(ProjectDependencies) = postProject
+		{69F3F46D-D19E-4CF7-A6F9-0FE85AB7FF1D} = {69F3F46D-D19E-4CF7-A6F9-0FE85AB7FF1D}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapMaker", "MapMaker\MapMaker.csproj", "{ADFCE420-42EC-432A-BB20-B9A90300F161}"
 EndProject
